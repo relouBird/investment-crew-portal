@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Nuxt Minimal Starter
 
 Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
@@ -73,3 +74,7 @@ bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
+=======
+# investment-crew
+Ceci est site d'investissement mit en place pour ameliorer nos gains quotidiens
+>>>>>>> ffdf832947e4e2ee1062eae61c9e87b6e4a656ca
