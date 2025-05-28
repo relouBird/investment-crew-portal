@@ -1,0 +1,9 @@
+body {
+  font-family: 'Montserrat','Roboto', sans-serif;
+}
+
+:root{
+    --primary-color : #1E3A8A;
+    --secondary-color : #1E3A8A;
+    --border-color: #0000001c;
+}

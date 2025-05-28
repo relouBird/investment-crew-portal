@@ -1,15 +1,47 @@
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
 export default defineNuxtConfig({
-  compatibilityDate: '2024-11-01',
-  app:{
+  //...
+  build: {
+    transpile: ["vuetify"],
+  },
+
+  modules: [
+    (_options, nuxt) => {
+      nuxt.hooks.hook("vite:extendConfig", (config) => {
+        // @ts-expect-error
+        config.plugins.push(vuetify({ autoImport: true }));
+      });
+    },
+    //...
+  ],
+
+  app: {
     head: {
-      charset: 'utf-8',
-      viewport: 'width=device-width, initial-scale=1',
+      charset: "utf-8",
+      viewport: "width=device-width, initial-scale=1",
       link: [
         { rel: "icon", type: "ico", href: "/favicon.ico" },
-        { rel: "stylesheet", type: "text/css", href: "https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;600&display=swap" },
+        {
+          rel: "stylesheet",
+          type: "text/css",
+          href: "https://fonts.googleapis.com/css2?family=Montserrat:wght@100;300;400;500;600&display=swap",
+        },
       ],
-    }
+    },
   },
-  devtools: { enabled: true },
-})
+
+  css: [
+    // Votre fichier CSS global
+    '@/assets/css/main.css'
+  ],
+
+  vite: {
+    vue: {
+      template: {
+        transformAssetUrls,
+      },
+    },
+  },
+
+  compatibilityDate: "2025-05-28",
+});

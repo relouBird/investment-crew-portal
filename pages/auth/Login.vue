@@ -1,8 +1,27 @@
+
 <template>
   <div class="auth-container">
     <div class="title">
-      <h2>Welcome on Investia !</h2>
-      <p>This is the most simple investment plateforms</p>
+      <h2>Welcome Back!</h2>
+      <p>Login with your information to continue.</p>
+    </div>
+    
+    <form class="form">
+      <div class="input">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Email Address" />
+      </div>
+      <div class="input">
+        <label for="password">Password</label>
+        <input type="password" id="password" placeholder="Password" />
+      </div>
+      <div class="login">
+        <button type="submit">Login</button>
+      </div>
+    </form>
+    
+    <div class="end">
+      <p>Dont't have account ? <a href="/auth/register">Sign In</a></p>
     </div>
   </div>
 </template>
