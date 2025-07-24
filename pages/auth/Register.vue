@@ -1,51 +1,180 @@
+<script setup lang="ts">
+import * as yup from "yup";
+import useAuthStore from "~/stores/auth.store";
+import type { RegisterCredentialType } from "~/types/user.type";
+
+// Définir le layout à utiliser
+definePageMeta({
+  layout: "auth",
+  middleware: "auth-default"
+});
+
+// Meta tags
+useHead({
+  title: "S'enregistrer - InvestIA",
+  meta: [{ name: "description", content: "Enregistrez-vous sur InvestIA" }],
+});
+
+const authStore = useAuthStore();
+const store = storeToRefs(authStore);
+
+// Variables réactives
+const showPassword = ref(false);
+const loading = ref(false);
+
+// 🔹 Créer un formulaire réactif
+const form = useForm(
+  // Schéma de validation Yup
+  yup.object().shape({
+    email: yup.string().email(),
+    password: yup
+      .string()
+      .min(6, "Password is too weak")
+      .matches(
+        /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
+        "Password must contains letters and numbers"
+      )
+      .required("Password is required"),
+    password_confirmation: yup
+      .string()
+      .required()
+      .oneOf([yup.ref("password")], "Not corresponding"),
+  }),
+  {
+    email: store.identifier.value ?? "",
+    password: "",
+    password_confirmation: "",
+  }
+);
+
+// Méthodes
+const handleLogin = async () => {
+  loading.value = true;
+
+  try {
+    const response = await form.submit(
+      async () => await authStore.register(form.data as RegisterCredentialType)
+    );
+
+    form.clear();
+    form.data.password = "";
+    form.data.password_confirmation = "";
+  } catch (error) {
+    console.log(error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+watch(form.data, () => {
+  console.log("data =>", form.data);
+});
+</script>
+
 <template>
   <div class="auth-container">
     <div class="title">
-      <h2>Let's Register</h2>
-      <p>Add your personal information to continue.</p>
+      <h2 class="py-0">Let's Register</h2>
+      <p class="pt-0">Add your personal information to continue.</p>
     </div>
 
-    <form class="form">
-      <div class="input">
-        <label for="email">Email</label>
-        <input type="email" id="email" placeholder="Email Address" />
+    <form class="form" @submit.prevent="handleLogin">
+      <div class="input-wrapper">
+        <label for="password">Email</label>
+        <v-text-field
+          v-model="form.data.email"
+          :error-messages="form.errors.email"
+          @change="form.validateField('email')"
+          id="email"
+          type="email"
+          placeholder="Email"
+          variant="outlined"
+          density="compact"
+          class="py-1"
+          color="primary"
+          hide-details
+          required
+        />
       </div>
-      <div class="input">
+
+      <div class="input-wrapper">
         <label for="password">Password</label>
-        <input type="password" id="password" placeholder="Password" />
+        <v-text-field
+          :error-messages="form.errors.password"
+          v-model="form.data.password"
+          @change="form.validateField('password')"
+          id="password"
+          :type="showPassword ? 'text' : 'password'"
+          placeholder="Password"
+          variant="outlined"
+          density="compact"
+          class="py-1"
+          color="primary"
+          hide-details
+          required
+          :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append-inner="showPassword = !showPassword"
+        />
       </div>
-      <!-- <div class="input">
-        <label for="name">Nom</label>
-        <div class="inp">
-          <input type="text" id="name" placeholder="First Name" />
-          <input type="text" id="name" placeholder="Last Name" />
-        </div>
-      </div> -->
-      <div class="input">
-        <label for="password">Confirm Password</label>
-        <input type="password" id="confirmpassword" placeholder="Confirm Password" />
+
+      <div class="input-wrapper pb-4">
+        <label for="confirmpassword">Confirm Password</label>
+        <v-text-field
+          id="confirmpassword"
+          :type="showPassword ? 'text' : 'password'"
+          placeholder="Confirm Your password"
+          :error-messages="form.errors.password_confirmation"
+          v-model="form.data.password_confirmation"
+          @change="form.validateField('password_confirmation')"
+          variant="outlined"
+          density="compact"
+          color="primary"
+          hide-details
+          required
+          :append-inner-icon="showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append-inner="showPassword = !showPassword"
+        />
       </div>
-      <div class="login">
-        <button type="submit">Login</button>
-      </div>
+
+      <v-btn
+        block
+        type="submit"
+        :disabled="
+          (form.isInValid instanceof Object
+            ? form.isInValid.value
+            : form.isInValid) ||
+          (form.processing instanceof Object
+            ? form.processing.value
+            : form.processing)
+        "
+        :loading="loading"
+        color="primary"
+        class="text-none"
+        size="large"
+      >
+        Register
+      </v-btn>
     </form>
 
     <div class="end">
-      <p>Already have account ? <a href="/auth/login">Sign In</a></p>
+      <p>
+        Don't have account ? <nuxt-link to="/auth/login">Sign In</nuxt-link>
+      </p>
     </div>
   </div>
 </template>
 
 <style scoped>
-
-
 .auth-container {
   width: 100%;
 }
 
 .title {
-  margin-bottom: 2rem;
   text-align: center;
+}
+
+.title p {
+  transform: translateY(-7px);
 }
 
 h2 {
@@ -61,62 +190,25 @@ h2 {
   width: 100%;
 }
 
-.input {
-  margin-bottom: 1.2rem;
-}
-
-.input:nth-child(2) .inp{
-    display: flex;
-    gap: 0.5em;
-}
-.input:nth-child(2) .inp input{
-    padding: 0.75em 0.5em 0.75em 1em;
-}
-
-.input label {
-  display: block;
+.input-wrapper {
   margin-bottom: 0.5rem;
+}
+label {
+  display: block;
+  margin-bottom: 0.25rem;
   font-size: 0.95em;
-}
-
-.input input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #e5e7eb;
-  border-radius: 6px;
-  transition: border-color 0.3s;
-}
-
-.input input:focus {
-  border-color: #1E3A8A;
-  outline: none;
-}
-
-.login button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #1E3A8A;
-  color: white;
-  border: none;
-  border-radius: 6px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.login button:hover {
-  background-color: #1E3A8A;
+  color: rgba(0, 0, 0, 0.6);
 }
 
 .end {
-  margin-top: 1.5rem;
+  margin-top: 1rem;
   text-align: center;
   color: #6b7280;
   font-size: 0.95em;
 }
 
 .end a {
-  color: #1E3A8A;
+  color: #1e3a8a;
   text-decoration: none;
 }
 

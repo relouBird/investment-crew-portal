@@ -1,9 +1,38 @@
 body {
-  font-family: 'Montserrat','Roboto', sans-serif;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif !important;
 }
 
-:root{
-    --primary-color : #1E3A8A;
-    --secondary-color : #1E3A8A;
-    --border-color: #0000001c;
+.font-montserrat,
+.montserrat-font {
+  font-family: "Montserrat", Arial, Helvetica, sans-serif !important;
+}
+
+/* Variantes de poids */
+.font-montserrat-200 {
+  font-weight: 200 !important;
+}
+.font-montserrat-300 {
+  font-weight: 300 !important;
+}
+.font-montserrat-400 {
+  font-weight: 400 !important;
+}
+.font-montserrat-500 {
+  font-weight: 500 !important;
+}
+.font-montserrat-600 {
+  font-weight: 600 !important;
+}
+.font-montserrat-700 {
+  font-weight: 700 !important;
+}
+.font-montserrat-800 {
+  font-weight: 800 !important;
+}
+
+:root {
+  --primary-color: #1e3a8a;
+  --secondary-color: #1e3a8a;
+  --border-color: #0000001c;
+  font-family: "Montserrat", Arial, Helvetica, sans-serif !important;
 }

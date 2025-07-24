@@ -1,14 +1,59 @@
+<script lang="ts" setup>
+import useAuthStore from "~/stores/auth.store";
+
+// Définir le layout à utiliser
+definePageMeta({
+  layout: "default",
+  middleware: ["auth"],
+});
+
+// Meta tags
+useHead({
+  title: "Bienvenue - InvestIA",
+  meta: [{ name: "description", content: "Bienvenue sur InvestIA" }],
+});
+
+//store
+const authStore = useAuthStore();
+</script>
+
 <template>
-  <div class="auth-container">
+  <v-row>
+    <!---Congratulation card---->
+    <v-col cols="12" sm="12" lg="8">
+      <UiCongratulationCard />
+    </v-col>
+    <!---Purchase / Total earnings---->
+    <v-col cols="12" sm="12" lg="4">
+      <UiTotalEarnings />
+    </v-col>
+
+    <!---Referral Invite Component---->
+    <v-col cols="12" sm="12" lg="4">
+      <UiReferralInvite />
+    </v-col>
+    <!---Product performence---->
+    <v-col cols="12" sm="12" lg="8">
+      <UiProductPerformance />
+    </v-col>
+  </v-row>
+
+  <!-- <div class="auth-container">
     <div class="title">
       <h2>Welcome on Investia !</h2>
       <p>This is the most simple investment plateforms</p>
+      <v-btn
+        block
+        color="primary"
+        class="text-none mt-5"
+        @click="authStore.signOut"
+        >Logout</v-btn
+      >
     </div>
-  </div>
+  </div> -->
 </template>
 
 <style scoped>
-
 .auth-container {
   width: 100%;
 }
@@ -50,14 +95,14 @@ h2 {
 }
 
 .input input:focus {
-  border-color: #1E3A8A;
+  border-color: #1e3a8a;
   outline: none;
 }
 
 .login button {
   width: 100%;
   padding: 0.75rem;
-  background-color: #1E3A8A;
+  background-color: #1e3a8a;
   color: white;
   border: none;
   border-radius: 6px;
@@ -67,7 +112,7 @@ h2 {
 }
 
 .login button:hover {
-  background-color: #1E3A8A;
+  background-color: #1e3a8a;
 }
 
 .end {
@@ -78,7 +123,7 @@ h2 {
 }
 
 .end a {
-  color: #1E3A8A;
+  color: #1e3a8a;
   text-decoration: none;
 }
 
