@@ -145,6 +145,14 @@ onMounted(async () => {
     await meStore.getMeData();
   }
 });
+
+watch(
+  () => meStore.getMe,
+  () => {
+    user.value = meStore.getMe as UserMetaData;
+    user.value.name = user.value.firstName + " " + user.value.lastName;
+  }
+);
 </script>
 
 <template>

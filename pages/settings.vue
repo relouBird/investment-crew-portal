@@ -14,7 +14,7 @@ const authStore = useAuthStore();
 const meStore = useMeStore();
 
 //Variables utiles
-const userSettings = ref(meStore.getMe ?? ({} as UserMetaData));
+const userSettings = computed(() => meStore.getMe ?? ({} as UserMetaData));
 const dateJoined = ref(formatDateThirdType(authStore.me?.created_at ?? "")); // date à laquelle il a rejoint la plateforme
 
 const deleteModal = ref<boolean>(false);
