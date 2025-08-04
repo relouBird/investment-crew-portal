@@ -39,14 +39,30 @@ type UserIdentity = {
   email: string;
 };
 
+type NotificationsType = {
+  email: boolean;
+  push: boolean;
+  betResults: boolean;
+  promotions: boolean;
+};
+
 type AppMetadata = {
   provider: string;
   providers: string[];
 };
 
-type UserMetaData = {
+export type UserMetaData = {
+  firstName: string;
+  lastName: string;
+  generatedId: string;
+  email: string;
+  phone: string;
+  country: string;
+  twoFactorEnabled: boolean;
+  notifications: NotificationsType;
   [key: string]: any; // Index signature pour permettre des propriétés supplémentaires
 };
+
 
 export type User = {
   id: string;

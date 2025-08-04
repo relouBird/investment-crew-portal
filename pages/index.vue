@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import useAuthStore from "~/stores/auth.store";
+import useMeStore from "~/stores/me.store";
 
 // Définir le layout à utiliser
 definePageMeta({
@@ -15,13 +16,18 @@ useHead({
 
 //store
 const authStore = useAuthStore();
+const meStore = useMeStore();
+
+onMounted(() => {
+  console.log("me =>", authStore.me?.user_metadata);
+});
 </script>
 
 <template>
   <v-row>
     <!---Congratulation card---->
     <v-col cols="12" sm="12" lg="8">
-      <UiCongratulationCard />
+      <UiCongratulationCard :name="meStore.getMe?.firstName ?? ''" />
     </v-col>
     <!---Purchase / Total earnings---->
     <v-col cols="12" sm="12" lg="4">

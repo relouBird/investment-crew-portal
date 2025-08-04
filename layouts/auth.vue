@@ -25,7 +25,7 @@
   padding: none !important;
 }
 
-.imagePage{
+.imagePage {
   width: 3rem;
 }
 
@@ -39,14 +39,18 @@ main {
   overflow: hidden;
 }
 
-
 .full {
   width: 100%;
   display: flex;
   justify-content: center;
 }
 
-/* .full img {
-  width: 65px;
-} */
+
+/* Mobile optimizations */
+@media (max-width: 650px) {
+  main {
+    margin: 0 1.2em;
+    padding: 1rem 1.2rem 1.5rem; /* Espace interne */
+  }
+}
 </style>

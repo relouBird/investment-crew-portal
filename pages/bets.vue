@@ -103,6 +103,7 @@
 <script setup lang="ts">
 definePageMeta({
   layout: "default",
+  middleware: ["auth"],
 });
 
 const selectedTab = ref("active");

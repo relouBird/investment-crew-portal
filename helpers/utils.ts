@@ -13,13 +13,20 @@ export function areObjectsDifferent(
   return false; // tout est identique
 }
 
-export function formatDateFirstType(dateString: Date) {
+export function formatDateFirstType(dateString: Date | string) {
   return new Date(dateString).toLocaleDateString("fr-FR", {
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
+  });
+}
+
+export function formatDateThirdType(dateString: Date | string) {
+  return new Date(dateString).toLocaleDateString("fr-FR", {
+    month: "long",
+    year: "numeric",
   });
 }
 
@@ -33,7 +40,6 @@ export function formatDateSecondType(date: string): string {
     minute: "2-digit",
   }).format(dateF);
 }
-
 
 export function timeSince(date: Date | string): string {
   const now = new Date();

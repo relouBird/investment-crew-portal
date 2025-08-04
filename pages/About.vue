@@ -25,7 +25,12 @@
       </v-card-title>
       <v-card-text>
         <v-row>
-          <v-col cols="6" md="3" v-for="action in quickActions" :key="action.title">
+          <v-col
+            cols="6"
+            md="3"
+            v-for="action in quickActions"
+            :key="action.title"
+          >
             <v-btn
               :color="action.color"
               variant="tonal"
@@ -68,7 +73,10 @@
             </v-list-item-subtitle>
             <template v-slot:append>
               <div class="text-right">
-                <div class="font-weight-bold" :class="`text-${activity.amountColor}`">
+                <div
+                  class="font-weight-bold"
+                  :class="`text-${activity.amountColor}`"
+                >
                   {{ activity.amount }}
                 </div>
                 <div class="text-caption text-grey-600">
@@ -85,92 +93,93 @@
 
 <script setup lang="ts">
 definePageMeta({
-  layout: 'default'
-})
+  layout: "default",
+  middleware: ["auth"],
+});
 
 const quickStats = [
   {
-    title: 'Solde total',
-    value: '€2,547.89',
-    icon: 'mdi-wallet',
-    color: 'primary'
+    title: "Solde total",
+    value: "€2,547.89",
+    icon: "mdi-wallet",
+    color: "primary",
   },
   {
-    title: 'Paris actifs',
-    value: '12',
-    icon: 'mdi-chart-line',
-    color: 'success'
+    title: "Paris actifs",
+    value: "12",
+    icon: "mdi-chart-line",
+    color: "success",
   },
   {
-    title: 'Gains du mois',
-    value: '+€389.50',
-    icon: 'mdi-trending-up',
-    color: 'success'
+    title: "Gains du mois",
+    value: "+€389.50",
+    icon: "mdi-trending-up",
+    color: "success",
   },
   {
-    title: 'Taux de réussite',
-    value: '67%',
-    icon: 'mdi-target',
-    color: 'info'
-  }
-]
+    title: "Taux de réussite",
+    value: "67%",
+    icon: "mdi-target",
+    color: "info",
+  },
+];
 
 const quickActions = [
   {
-    title: 'Nouveau Pari',
-    icon: 'mdi-plus-circle',
-    color: 'primary',
-    action: () => navigateTo('/dashboard/bets/new')
+    title: "Nouveau Pari",
+    icon: "mdi-plus-circle",
+    color: "primary",
+    action: () => navigateTo("/dashboard/bets/new"),
   },
   {
-    title: 'Déposer',
-    icon: 'mdi-bank-plus',
-    color: 'success',
-    action: () => console.log('Deposit')
+    title: "Déposer",
+    icon: "mdi-bank-plus",
+    color: "success",
+    action: () => console.log("Deposit"),
   },
   {
-    title: 'Retirer',
-    icon: 'mdi-bank-minus',
-    color: 'orange',
-    action: () => console.log('Withdraw')
+    title: "Retirer",
+    icon: "mdi-bank-minus",
+    color: "orange",
+    action: () => console.log("Withdraw"),
   },
   {
-    title: 'Historique',
-    icon: 'mdi-history',
-    color: 'info',
-    action: () => navigateTo('/dashboard/transactions')
-  }
-]
+    title: "Historique",
+    icon: "mdi-history",
+    color: "info",
+    action: () => navigateTo("/dashboard/transactions"),
+  },
+];
 
 const recentActivity = [
   {
-    title: 'Pari gagné - Match PSG vs Real',
-    subtitle: 'Football - Ligue des Champions',
-    amount: '+€150.00',
-    amountColor: 'success',
-    time: 'Il y a 2h',
-    icon: 'mdi-soccer',
-    color: 'success'
+    title: "Pari gagné - Match PSG vs Real",
+    subtitle: "Football - Ligue des Champions",
+    amount: "+€150.00",
+    amountColor: "success",
+    time: "Il y a 2h",
+    icon: "mdi-soccer",
+    color: "success",
   },
   {
-    title: 'Dépôt par carte bancaire',
-    subtitle: 'Visa **** 1234',
-    amount: '+€200.00',
-    amountColor: 'info',
-    time: 'Il y a 5h',
-    icon: 'mdi-credit-card',
-    color: 'info'
+    title: "Dépôt par carte bancaire",
+    subtitle: "Visa **** 1234",
+    amount: "+€200.00",
+    amountColor: "info",
+    time: "Il y a 5h",
+    icon: "mdi-credit-card",
+    color: "info",
   },
   {
-    title: 'Pari perdu - Lakers vs Warriors',
-    subtitle: 'Basketball - NBA',
-    amount: '-€75.00',
-    amountColor: 'error',
-    time: 'Hier',
-    icon: 'mdi-basketball',
-    color: 'error'
-  }
-]
+    title: "Pari perdu - Lakers vs Warriors",
+    subtitle: "Basketball - NBA",
+    amount: "-€75.00",
+    amountColor: "error",
+    time: "Hier",
+    icon: "mdi-basketball",
+    color: "error",
+  },
+];
 </script>
 
 <style scoped>

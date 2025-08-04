@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { ArrowUpLeftIcon } from "vue-tabler-icons";
 import { formatBalance } from "~/helpers/utils";
+
+type UiCongratulationCardType = {
+  name : string;
+}
+
+const props = defineProps<UiCongratulationCardType>();
 </script>
 
 <template>
@@ -11,7 +17,7 @@ import { formatBalance } from "~/helpers/utils";
     <span class="lstick"></span>
     <img src="@/assets/images/profile/businessmen.png" class="bg-img-1" />
     <v-card-text>
-      <h2 class="title text-h6 overlay-title">Bienvenue RelouBird</h2>
+      <h2 class="title text-h6 overlay-title">Bienvenue {{ name ?? "User" }}</h2>
       <h2 class="font-weight-bold mt-4 d-flex align-center mb-1">
         &#x244; {{ formatBalance(39358) }}
         <span class="text-subtitle-1 ml-2 d-flex align-center text-success">

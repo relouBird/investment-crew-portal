@@ -40,7 +40,6 @@ const useAuthStore = defineStore("auth-store", {
   },
   actions: {
     async login(payload: LoginCredentialType) {
-      console.log("fou");
       // garde d'abord les données utiles pour le login dans le state
       this.identifier = payload.email;
       console.log("identifier =>", this.identifier);

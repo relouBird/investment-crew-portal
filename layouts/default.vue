@@ -1,16 +1,8 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useDisplay } from "vuetify";
 import { formatBalance } from "~/helpers/utils";
 import useAuthStore from "~/stores/auth.store";
-
-// Interfaces
-interface User {
-  id: string;
-  name: string;
-  email: string;
-}
+import useMeStore from "~/stores/me.store";
+import type { UserMetaData } from "~/types/user.type";
 
 interface NavigationItem {
   title: string;
@@ -28,6 +20,7 @@ interface Notification {
 
 // Composables
 const authStore = useAuthStore();
+const meStore = useMeStore();
 
 // Reactive data
 const drawer = ref(true);
@@ -38,14 +31,13 @@ const depositAmount = ref("");
 const depositMethod = ref("");
 
 // User data
-const user = ref<User>({
-  id: "USR001234",
-  name: "Relou Bird",
-  email: "john.doe@email.com",
-});
+const user = ref<UserMetaData>(
+  (meStore.getMe || authStore.me?.user_metadata) as UserMetaData
+);
+user.value.name = user.value.firstName + " " + user.value.lastName;
 
 // Account data
-const accountBalance = ref(500);
+const accountBalance = ref(0);
 
 // Navigation items
 const navigationItems: NavigationItem[] = [
@@ -90,7 +82,7 @@ const notifications = ref<Notification[]>([
 
 // Computed properties
 const userInitials = computed(() => {
-  return user.value.name
+  return (user.value.name as string)
     .split(" ")
     .map((name) => name.charAt(0))
     .join("")
@@ -143,7 +135,16 @@ const markAllAsRead = () => {
 
 const logout = async () => {
   await authStore.signOut();
+  await meStore.clearMeData();
 };
+
+onMounted(async () => {
+  if (!meStore.getMe && authStore.me) {
+    meStore.setMeData(authStore.me.user_metadata, authStore.me.email);
+  } else {
+    await meStore.getMeData();
+  }
+});
 </script>
 
 <template>
@@ -208,7 +209,7 @@ const logout = async () => {
                 {{ user.name }}
               </div>
               <div class="text-caption text-grey-darken-1">
-                ID: {{ user.id }}
+                ID: {{ user.generatedId }}
               </div>
             </div>
           </div>

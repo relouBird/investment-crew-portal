@@ -1,3 +1,55 @@
+<script setup lang="ts">
+import useAuthStore from "~/stores/auth.store";
+import type { UserMetaData } from "~/types/user.type";
+import { formatDateThirdType } from "~/helpers/utils";
+import useMeStore from "~/stores/me.store";
+
+definePageMeta({
+  layout: "default",
+  middleware: ["auth"],
+});
+
+// Composables
+const authStore = useAuthStore();
+const meStore = useMeStore();
+
+//Variables utiles
+const userSettings = ref(meStore.getMe ?? ({} as UserMetaData));
+const dateJoined = ref(formatDateThirdType(authStore.me?.created_at ?? "")); // date à laquelle il a rejoint la plateforme
+
+const deleteModal = ref<boolean>(false);
+const loading = ref<boolean>(false);
+
+const downloadData = () => {
+  // Logic pour télécharger les données utilisateur
+  console.log("Downloading user data");
+};
+
+const closeAccount = () => {
+  // Logic pour fermer le compte
+  console.log("Closing account");
+  deleteModal.value = true;
+};
+
+const confirmCloseAccount = async () => {
+  loading.value = true;
+  try {
+    await meStore.deleteAccount();
+    await authStore.signOut();
+    await meStore.clearMeData();
+  } catch (error) {
+    console.log("erreur =>", error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const logout = async () => {
+  await authStore.signOut();
+  await meStore.clearMeData();
+};
+</script>
+
 <!-- pages/dashboard/settings.vue -->
 <template>
   <div>
@@ -6,119 +58,12 @@
     <v-row>
       <v-col cols="12" md="8">
         <!-- Account Settings -->
-        <v-card class="mb-6" elevation="0" border rounded="lg">
-          <v-card-title class="text-h6 font-weight-bold font-montserrat mb-3">
-            <v-icon left>mdi-account</v-icon>
-            Informations du compte
-          </v-card-title>
-          <v-card-text>
-            <v-form>
-              <v-row>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="userSettings.firstName"
-                    label="Prénom"
-                    variant="outlined"
-                    density="compact"
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="userSettings.lastName"
-                    label="Nom"
-                    variant="outlined"
-                    density="compact"
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12">
-                  <v-text-field
-                    v-model="userSettings.email"
-                    label="Email"
-                    type="email"
-                    variant="outlined"
-                    density="compact"
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-text-field
-                    v-model="userSettings.phone"
-                    label="Téléphone"
-                    variant="outlined"
-                    density="compact"
-                    hide-details
-                  ></v-text-field>
-                </v-col>
-                <v-col cols="12" md="6">
-                  <v-select
-                    v-model="userSettings.country"
-                    :items="countries"
-                    label="Pays"
-                    variant="outlined"
-                    density="compact"
-                    hide-details
-                  ></v-select>
-                </v-col>
-              </v-row>
-              <v-btn color="primary" class="mt-3" @click="saveAccountSettings">
-                <v-icon left>mdi-content-save</v-icon>
-                Sauvegarder
-              </v-btn>
-            </v-form>
-          </v-card-text>
-        </v-card>
+        <settings-account />
 
         <!-- Security Settings -->
-        <v-card class="mb-6" elevation="0" border rounded="lg">
-          <v-card-title class="text-h6 font-weight-bold font-montserrat">
-            <v-icon left>mdi-security</v-icon>
-            Sécurité
-          </v-card-title>
-          <v-card-text>
-            <v-form>
-              <v-text-field
-                v-model="passwordForm.currentPassword"
-                label="Mot de passe actuel"
-                type="password"
-                variant="outlined"
-                class="mb-4"
-              ></v-text-field>
-              <v-text-field
-                v-model="passwordForm.newPassword"
-                label="Nouveau mot de passe"
-                type="password"
-                variant="outlined"
-                class="mb-4"
-              ></v-text-field>
-              <v-text-field
-                v-model="passwordForm.confirmPassword"
-                label="Confirmer le mot de passe"
-                type="password"
-                variant="outlined"
-                class="mb-4"
-              ></v-text-field>
-              <v-btn color="primary" @click="changePassword">
-                <v-icon left>mdi-key</v-icon>
-                Changer le mot de passe
-              </v-btn>
-            </v-form>
-
-            <v-divider class="my-6"></v-divider>
-
-            <!-- Two Factor Authentication -->
-            <div class="mb-4">
-              <h3 class="text-h6 mb-3">Authentification à deux facteurs</h3>
-              <v-switch
-                v-model="userSettings.twoFactorEnabled"
-                label="Activer l'authentification à deux facteurs"
-                color="primary"
-                @change="toggleTwoFactor"
-              ></v-switch>
-            </div>
-          </v-card-text>
-        </v-card>
+        <settings-security
+          v-model:model-two-factors="userSettings.twoFactorEnabled"
+        />
       </v-col>
 
       <v-col cols="12" md="4">
@@ -143,7 +88,9 @@
 
             <div class="d-flex justify-space-between mb-2">
               <span class="text-body-2">Membre depuis</span>
-              <span class="font-weight-medium">Mars 2024</span>
+              <span class="font-weight-medium">
+                {{ dateJoined[0].toUpperCase() + dateJoined.slice(1) }}</span
+              >
             </div>
             <div class="d-flex justify-space-between mb-2">
               <span class="text-body-2">Statut</span>
@@ -151,11 +98,11 @@
             </div>
             <div class="d-flex justify-space-between mb-2">
               <span class="text-body-2">Total des paris</span>
-              <span class="font-weight-medium">127</span>
+              <span class="font-weight-medium">0</span>
             </div>
             <div class="d-flex justify-space-between">
               <span class="text-body-2">Taux de réussite</span>
-              <span class="font-weight-medium text-success">67%</span>
+              <span class="font-weight-medium text-success">0%</span>
             </div>
           </v-card-text>
         </v-card>
@@ -173,6 +120,7 @@
               variant="tonal"
               class="mb-3"
               @click="downloadData"
+              disabled
             >
               <v-icon left>mdi-download</v-icon>
               Télécharger mes données
@@ -238,93 +186,31 @@
       </v-col>
     </v-row>
   </div>
+
+  <!-- Partie qui gere les dialogs... -->
+  <v-dialog v-model="deleteModal" max-width="400">
+    <v-card class="">
+      <v-card-title class="font-montserrat"> Attention </v-card-title>
+      <v-card-text>
+        Etes-vous sur de vouloir supprimer votre compte ?
+      </v-card-text>
+      <v-card-actions>
+        <v-btn variant="text" @click="deleteModal = false" class="text-none">
+          Annuler
+        </v-btn>
+        <v-btn
+          color="primary"
+          variant="flat"
+          :loading="loading"
+          @click="confirmCloseAccount"
+          class="text-none"
+        >
+          Oui
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
-
-<script setup lang="ts">
-import useAuthStore from "~/stores/auth.store";
-
-definePageMeta({
-  layout: "default",
-});
-
-// Composables
-const router = useRouter();
-const authStore = useAuthStore();
-
-const userSettings = ref({
-  firstName: "John",
-  lastName: "Doe",
-  email: "john.doe@example.com",
-  phone: "+33 6 12 34 56 78",
-  country: "France",
-  twoFactorEnabled: false,
-  notifications: {
-    email: true,
-    push: true,
-    betResults: true,
-    promotions: false,
-  },
-});
-
-const passwordForm = ref({
-  currentPassword: "",
-  newPassword: "",
-  confirmPassword: "",
-});
-
-const countries = [
-  "France",
-  "Belgique",
-  "Suisse",
-  "Canada",
-  "Maroc",
-  "Algérie",
-  "Tunisie",
-  "Sénégal",
-  "Côte d'Ivoire",
-  "Cameroun",
-];
-
-const saveAccountSettings = () => {
-  // Logic pour sauvegarder les paramètres
-  console.log("Saving account settings:", userSettings.value);
-  // Afficher une notification de succès
-};
-
-const changePassword = () => {
-  if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
-    console.error("Les mots de passe ne correspondent pas");
-    return;
-  }
-  // Logic pour changer le mot de passe
-  console.log("Changing password");
-  // Reset form
-  passwordForm.value = {
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-  };
-};
-
-const toggleTwoFactor = (enabled: boolean) => {
-  // Logic pour activer/désactiver 2FA
-  console.log("Two factor authentication:", enabled);
-};
-
-const downloadData = () => {
-  // Logic pour télécharger les données utilisateur
-  console.log("Downloading user data");
-};
-
-const closeAccount = () => {
-  // Logic pour fermer le compte
-  console.log("Closing account");
-};
-
-const logout = async () => {
-  await authStore.signOut();
-};
-</script>
 
 <style scoped>
 .v-card {
