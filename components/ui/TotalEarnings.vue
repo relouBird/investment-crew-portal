@@ -1,6 +1,12 @@
 <script setup lang="ts">
 import { CurrencyDollarIcon } from "vue-tabler-icons";
 import { formatBalance } from "~/helpers/utils";
+
+type UiTotalEarningsType = {
+  funds: number;
+};
+
+const props = defineProps<UiTotalEarningsType>();
 </script>
 
 <template>
@@ -18,7 +24,7 @@ import { formatBalance } from "~/helpers/utils";
       </div>
       <div class="mt-11">
         <h2 class="title font-weight-bold mb-1">
-          &#x244; {{ formatBalance(93438.78) }}
+          &#x244; {{ formatBalance(funds) }}
         </h2>
         <span class="text-subtitle-1 textPrimary">Monthly Revenue</span>
       </div>

@@ -104,6 +104,7 @@
 definePageMeta({
   layout: "default",
   middleware: ["auth"],
+  // middleware: [],
 });
 
 const selectedTab = ref("active");

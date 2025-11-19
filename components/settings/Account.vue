@@ -31,11 +31,13 @@ const formUpdateInfos = useForm(
     phone: yup.string(),
   }),
   {
-    email: userSettings.value.email,
-    firstName: userSettings.value.firstName,
-    lastName: userSettings.value.lastName,
-    country: userSettings.value.country,
-    phone: userSettings.value.phone,
+    email: userSettings.value?.email ? userSettings.value.email : "",
+    firstName: userSettings.value?.firstName
+      ? userSettings.value.firstName
+      : "",
+    lastName: userSettings.value?.lastName ? userSettings.value.lastName : "",
+    country: userSettings.value?.country ? userSettings.value.country : "",
+    phone: userSettings.value?.phone ? userSettings.value.phone : "",
   }
 );
 const codeValue = ref<string>();
@@ -47,7 +49,10 @@ const saveAccountSettings = async () => {
 
   try {
     const response = await formUpdateInfos.submit(
-      async () => await meStore.updateUserInfos(formUpdateInfos.data as UpdateInfosPayload)
+      async () =>
+        await meStore.updateUserInfos(
+          formUpdateInfos.data as UpdateInfosPayload
+        )
     );
   } catch (error) {
     console.log(error);

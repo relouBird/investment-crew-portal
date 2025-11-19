@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import useAuthStore from "~/stores/auth.store";
 import useMeStore from "~/stores/me.store";
+import useWalletStore from "~/stores/wallet.store";
 
 // Définir le layout à utiliser
 definePageMeta({
@@ -17,6 +18,12 @@ useHead({
 //store
 const authStore = useAuthStore();
 const meStore = useMeStore();
+const walletStore = useWalletStore();
+
+// data reactive
+const funds = computed(() => walletStore.getWallet?.funds ?? 0);
+const growth = computed(() => walletStore.getWallet?.growth ?? 0);
+const wins = computed(() => walletStore.getWallet?.total_wins ?? 0);
 
 onMounted(() => {
   console.log("me =>", authStore.me?.user_metadata);
@@ -27,11 +34,15 @@ onMounted(() => {
   <v-row>
     <!---Congratulation card---->
     <v-col cols="12" sm="12" lg="8">
-      <UiCongratulationCard :name="meStore.getMe?.firstName ?? ''" />
+      <UiCongratulationCard
+        :funds="funds"
+        :name="meStore.getMe?.firstName ?? ''"
+        :growth="growth"
+      />
     </v-col>
     <!---Purchase / Total earnings---->
     <v-col cols="12" sm="12" lg="4">
-      <UiTotalEarnings />
+      <UiTotalEarnings :funds="wins" />
     </v-col>
 
     <!---Referral Invite Component---->
@@ -40,7 +51,7 @@ onMounted(() => {
     </v-col>
     <!---Product performence---->
     <v-col cols="12" sm="12" lg="8">
-      <UiProductPerformance />
+      <!-- <UiProductPerformance /> -->
     </v-col>
   </v-row>
 

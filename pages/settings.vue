@@ -14,7 +14,30 @@ const authStore = useAuthStore();
 const meStore = useMeStore();
 
 //Variables utiles
-const userSettings = computed(() => meStore.getMe ?? ({} as UserMetaData));
+const userSettings = computed(() => {
+  if (meStore.getMe && meStore.getMe.notifications) {
+    return meStore.getMe;
+  } else if (meStore.getMe && !meStore.getMe.notifications) {
+    return {
+      ...meStore.getMe,
+      notifications: {
+        push: true,
+        email: true,
+        betResults: true,
+        promotions: false,
+      },
+    } as UserMetaData;
+  } else {
+    return {
+      notifications: {
+        push: true,
+        email: true,
+        betResults: true,
+        promotions: false,
+      },
+    } as UserMetaData;
+  }
+});
 const dateJoined = ref(formatDateThirdType(authStore.me?.created_at ?? "")); // date à laquelle il a rejoint la plateforme
 
 const deleteModal = ref<boolean>(false);

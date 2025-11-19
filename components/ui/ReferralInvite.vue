@@ -1,21 +1,16 @@
 <script lang="ts" setup>
-import { ref, computed } from "vue";
+import useAuthStore from "~/stores/auth.store";
+
+// gestions des stores
+const authStore = useAuthStore();
 
 // État réactif
 const copied = ref(false);
-const emailDialog = ref(false);
-const sending = ref(false);
 
 // Données de parrainage (à remplacer par des données réelles de votre store)
 const referralStats = ref({
-  totalInvites: 12,
-  successfulReferrals: 3,
-});
-
-// Formulaire d'email
-const emailForm = ref({
-  email: "",
-  message: "",
+  totalInvites: 0,
+  successfulReferrals: 0,
 });
 
 // Snackbar pour les notifications
@@ -28,8 +23,9 @@ const snackbar = ref({
 // Lien de parrainage généré (remplacez par votre logique)
 const referralLink = computed(() => {
   // Vous devriez récupérer l'ID utilisateur depuis votre store auth
-  const userId = "USR001234"; // authStore.user.id
-  return `https://rsg-investia.com/register?ref=${userId}`;
+  return `https://investment-crew-portal.vercel.app/auth/register/${
+    authStore.me?.id ?? ""
+  }`;
 });
 
 // Méthodes

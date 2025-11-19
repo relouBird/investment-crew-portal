@@ -1,4 +1,5 @@
 import type { AxiosResponse } from "axios";
+import { notify } from "~/helpers/notifications";
 import useAuthService from "~/services/auth.service";
 import type {
   LoginCredentialType,
@@ -178,14 +179,31 @@ const useAuthStore = defineStore("auth-store", {
     },
 
     async signOut() {
-      // Ne jamais l'appeler dans le middleware cause des erreurs inattendus en vide le localstorage meme avant utilisation...
-      // this is for signout user....
+      let response: AxiosResponse = await service.logout();
 
-      this.access_token = null;
-      this.refresh_token = null;
-      this.expired_at = null;
-      this.me = null;
-      return navigateTo("/auth/login");
+      if (response.status == 200 || response.status == 201) {
+        let data = response.data as any;
+
+        // Ne jamais l'appeler dans le middleware cause des erreurs inattendus en vide le localstorage meme avant utilisation...
+        // this is for signout user....
+        console.log("data-log-out =>", data.data);
+
+        this.access_token = null;
+        this.refresh_token = null;
+        this.expired_at = null;
+        this.me = null;
+
+        notify({
+          color: "success",
+          message: data.message,
+          visible: true,
+        });
+        return navigateTo("/auth/login");
+      } else if (response.status == 500 || response.status == 404) {
+        console.log("error =>", response.data);
+      }
+
+      return response;
     },
   },
 });

@@ -1,4 +1,5 @@
 import type { AxiosResponse } from "axios";
+import { notify } from "~/helpers/notifications";
 import useMeService from "~/services/me.service";
 import type {
   ChangePasswordPayload,
@@ -58,7 +59,12 @@ const useMeStore = defineStore("me-store", {
         console.log("data-getted-message =>", data.message);
         this.user = data.data;
         this.email = data.email;
-      } else if (response.status == 500) {
+        notify({
+          color: "success",
+          message: data.message,
+          visible: true,
+        });
+      } else if (response.status == 500 || response.status == 404) {
         console.log("error =>", response.data);
       }
 

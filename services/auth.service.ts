@@ -34,6 +34,15 @@ export default function useAuthService(): ServiceProps {
   };
 
   /**
+   * Se deconnecter...
+   */
+  const logout = async (): Promise<AxiosResponse> => {
+    return await request(`/auth/logout`, {
+      method: "post",
+    });
+  };
+
+  /**
    * Ceci permet d'envoyer un email au user permet de reset son mot de passe
    */
   const sendOTP = async (payload: string): Promise<AxiosResponse> => {
@@ -109,6 +118,7 @@ export default function useAuthService(): ServiceProps {
   return {
     register,
     login,
+    logout,
     update,
     verifyOTP,
     sendOTP,

@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { AsYouType, parsePhoneNumberFromString } from "libphonenumber-js";
 import { activeCountries, type CountryType } from "~/helpers/data-countries";
+import { notify } from "~/helpers/notifications";
 import useCountryStore from "~/stores/countries.store";
 
 const props = defineProps<{
@@ -24,7 +25,16 @@ const allCountries = computed(() => countryStore.allCountries || []);
 
 onMounted(async () => {
   console.log("countries-length =>", allCountries.value.length);
-  await countryStore.getAllCountries();
+  try {
+    await countryStore.getAllCountries();
+  } catch (error) {
+    notify({
+      color: "error",
+      message:
+        (error as string) ?? "Something Where wrong when fetch countries",
+      visible: true,
+    });
+  }
 });
 
 // Valeurs locales

@@ -2,6 +2,7 @@
 import { formatBalance } from "~/helpers/utils";
 import useAuthStore from "~/stores/auth.store";
 import useMeStore from "~/stores/me.store";
+import useWalletStore from "~/stores/wallet.store";
 import type { UserMetaData } from "~/types/user.type";
 
 interface NavigationItem {
@@ -21,23 +22,28 @@ interface Notification {
 // Composables
 const authStore = useAuthStore();
 const meStore = useMeStore();
+const walletStore = useWalletStore();
 
 // Reactive data
 const drawer = ref(true);
 const activeTab = ref("/");
 const showDepositDialog = ref(false);
 const showNotifications = ref(false);
-const depositAmount = ref("");
-const depositMethod = ref("");
 
 // User data
-const user = ref<UserMetaData>(
-  (meStore.getMe || authStore.me?.user_metadata) as UserMetaData
+const user = computed<UserMetaData>(
+  () => (meStore.getMe || authStore.me?.user_metadata) as UserMetaData
 );
-user.value.name = user.value.firstName + " " + user.value.lastName;
+const userName = computed(() => {
+  if (user.value.firstName && user.value.lastName) {
+    return user.value.firstName + " " + user.value.lastName;
+  } else {
+    return "User Undefined";
+  }
+});
 
 // Account data
-const accountBalance = ref(0);
+const accountBalance = computed(() => walletStore.wallet?.funds ?? 0);
 
 // Navigation items
 const navigationItems: NavigationItem[] = [
@@ -45,14 +51,6 @@ const navigationItems: NavigationItem[] = [
   { title: "Mes Paris", icon: "mdi-chart-line", to: "/bets" },
   { title: "Transactions", icon: "mdi-credit-card", to: "/transactions" },
   { title: "Paramètres", icon: "mdi-cog", to: "/settings" },
-];
-
-// Payment methods
-const paymentMethods = [
-  "Carte Bancaire",
-  "Virement Bancaire",
-  "PayPal",
-  "Crypto-monnaies",
 ];
 
 // Notifications
@@ -82,7 +80,7 @@ const notifications = ref<Notification[]>([
 
 // Computed properties
 const userInitials = computed(() => {
-  return (user.value.name as string)
+  return (userName.value as string)
     .split(" ")
     .map((name) => name.charAt(0))
     .join("")
@@ -119,13 +117,6 @@ const getNotificationIcon = (type: string): string => {
   }
 };
 
-const processDeposit = () => {
-  console.log("Processing deposit:", depositAmount.value, depositMethod.value);
-  showDepositDialog.value = false;
-  depositAmount.value = "";
-  depositMethod.value = "";
-};
-
 const markAllAsRead = () => {
   notifications.value.forEach((notification) => {
     notification.read = true;
@@ -144,15 +135,16 @@ onMounted(async () => {
   } else {
     await meStore.getMeData();
   }
+  await walletStore.getWalletData();
 });
 
-watch(
-  () => meStore.getMe,
-  () => {
-    user.value = meStore.getMe as UserMetaData;
-    user.value.name = user.value.firstName + " " + user.value.lastName;
-  }
-);
+// watch(
+//   () => meStore.getMe,
+//   () => {
+//     user.value = meStore.getMe as UserMetaData;
+//     user.value.name = user.value.firstName + " " + user.value.lastName;
+//   }
+// );
 </script>
 
 <template>
@@ -214,10 +206,10 @@ watch(
             </v-avatar>
             <div v-if="drawer || $vuetify.display.smAndDown" class="ml-3">
               <div class="text-subtitle-2 font-weight-medium">
-                {{ user.name }}
+                {{ userName }}
               </div>
               <div class="text-caption text-grey-darken-1">
-                ID: {{ user.generatedId }}
+                ID: {{ user.generatedId ?? "000000000x1" }}
               </div>
             </div>
           </div>
@@ -337,40 +329,7 @@ watch(
     </v-bottom-navigation>
 
     <!-- Deposit Dialog -->
-    <v-dialog v-model="showDepositDialog" max-width="400px">
-      <v-card elevation="0">
-        <v-card-title class="text-h6 font-montserrat"
-          >Effectuer un dépôt</v-card-title
-        >
-        <v-card-text>
-          <v-text-field
-            v-model="depositAmount"
-            label="Montant"
-            type="number"
-            prefix="&#x244;"
-            variant="outlined"
-            color="primary"
-            class="mb-4"
-          ></v-text-field>
-          <v-select
-            v-model="depositMethod"
-            :items="paymentMethods"
-            label="Méthode de paiement"
-            variant="outlined"
-            color="primary"
-          ></v-select>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="showDepositDialog = false" variant="text">
-            Annuler
-          </v-btn>
-          <v-btn @click="processDeposit" color="primary" variant="flat">
-            Déposer
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+    <wallets-deposit-dialog v-model:model-value="showDepositDialog" />
 
     <!-- Notifications Dialog -->
     <v-dialog v-model="showNotifications" max-width="500px">
@@ -425,6 +384,10 @@ watch(
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.img {
+  object-fit: contain;
 }
 
 .balance-box {
