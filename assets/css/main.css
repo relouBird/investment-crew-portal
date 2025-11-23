@@ -1,4 +1,9 @@
-body {
+body,
+html {
+  font-family: "Montserrat", Arial, Helvetica, sans-serif !important;
+}
+
+* {
   font-family: "Montserrat", Arial, Helvetica, sans-serif !important;
 }
 

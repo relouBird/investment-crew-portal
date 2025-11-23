@@ -1,7 +1,10 @@
 <script lang="ts" setup>
+import transactionComposable from "~/composables/transaction-handler";
 import useAuthStore from "~/stores/auth.store";
 import useMeStore from "~/stores/me.store";
+import useTransactionStore from "~/stores/transaction.store";
 import useWalletStore from "~/stores/wallet.store";
+import type { TransactionModel } from "~/types/transaction.type";
 
 // Définir le layout à utiliser
 definePageMeta({
@@ -19,14 +22,40 @@ useHead({
 const authStore = useAuthStore();
 const meStore = useMeStore();
 const walletStore = useWalletStore();
+const transactionStore = useTransactionStore();
+
+const transactions = computed(() =>
+  transactionStore.getTransactions
+    ? transactionStore.getTransactions
+    : ([] as TransactionModel[])
+);
+
+const { evolution, transactionStats } = transactionComposable(transactions);
 
 // data reactive
 const funds = computed(() => walletStore.getWallet?.funds ?? 0);
-const growth = computed(() => walletStore.getWallet?.growth ?? 0);
-const wins = computed(() => walletStore.getWallet?.total_wins ?? 0);
+const growth = computed(() =>
+  evolution.value.isPositive
+    ? evolution.value.percentage
+    : "-" + evolution.value.percentage
+);
+const wins = computed(() => transactionStats.value.totalWins ?? 0);
 
 onMounted(() => {
   console.log("me =>", authStore.me?.user_metadata);
+});
+
+const loadTransactions = async () => {
+  try {
+    await transactionStore.fetch();
+  } catch (e) {
+  } finally {
+  }
+};
+
+onMounted(async () => {
+  // load les transactions
+  await loadTransactions();
 });
 </script>
 
