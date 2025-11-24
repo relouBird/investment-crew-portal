@@ -38,6 +38,7 @@ const useAuthStore = defineStore("auth-store", {
   persist: true,
   getters: {
     getIdentifier: (state) => state.identifier,
+    getMe: (state) => state.me,
   },
   actions: {
     async login(payload: LoginCredentialType) {
