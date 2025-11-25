@@ -39,7 +39,7 @@
         <v-tab value="available"
           >Paris Disponible ({{ activeMatches?.length ?? 0 }})</v-tab
         >
-        <v-tab value="active">Paris Actifs (15)</v-tab>
+        <v-tab value="active">Paris Actifs ({{ activesBets.length ?? 0 }})</v-tab>
         <v-tab value="completed">Terminés (15)</v-tab>
       </v-tabs>
 
@@ -53,49 +53,7 @@
         </v-window-item>
 
         <v-window-item value="active">
-          <v-row>
-            <v-col
-              cols="12"
-              md="6"
-              lg="4"
-              v-for="bet in activeBets"
-              :key="bet.id"
-            >
-              <v-card
-                class="bet-card border-sm border-opacity"
-                elevation="0"
-                rounded="lg"
-              >
-                <v-card-text>
-                  <div class="d-flex justify-space-between align-center mb-2">
-                    <v-chip :color="bet.sport.color" size="small">
-                      <v-icon left size="16">{{ bet.sport.icon }}</v-icon>
-                      {{ bet.sport.name }}
-                    </v-chip>
-                    <v-chip color="warning" size="small">En cours</v-chip>
-                  </div>
-                  <h3 class="text-h6 mb-2">{{ bet.match }}</h3>
-                  <p class="text-body-2 text-grey-600 mb-3">
-                    {{ bet.prediction }}
-                  </p>
-                  <div class="d-flex justify-space-between">
-                    <div>
-                      <div class="text-caption text-grey-600">Mise</div>
-                      <div class="font-weight-bold">{{ bet.stake }}</div>
-                    </div>
-                    <div class="text-right">
-                      <div class="text-caption text-grey-600">
-                        Gain potentiel
-                      </div>
-                      <div class="font-weight-bold text-success">
-                        {{ bet.potentialWin }}
-                      </div>
-                    </div>
-                  </div>
-                </v-card-text>
-              </v-card>
-            </v-col>
-          </v-row>
+          <bet-created-items :bets="activesBets" :is-loading="isLoading" />
         </v-window-item>
 
         <v-window-item value="completed">
@@ -161,24 +119,12 @@ const balance = computed(() => walletStore.getWallet?.funds ?? 0);
 const selectedTab = ref("available");
 
 const activeMatches = computed(() => betStore.matches);
-const activesBet = computed(() => betStore.getBets ?? []);
+const activesBets = computed(() => betStore.getBets ?? []);
 
 const actions = ref<{ action: boolean; match: MatchModel | undefined }>({
   action: false,
   match: undefined,
 });
-
-const activeBets = [
-  {
-    id: 1,
-    match: "Barcelona vs Arsenal",
-    sport: { name: "Football", icon: "mdi-soccer", color: "green" },
-    prediction: "Barcelona gagne",
-    stake: "€50.00",
-    potentialWin: "€125.00",
-  },
-  // ... more bets
-];
 
 const completedBetsHeaders = [
   { title: "Match", key: "match" },

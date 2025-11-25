@@ -1,13 +1,23 @@
 <script setup lang="ts">
 import type { MatchModel } from "~/types/bet.type";
-import { ClockIcon, TrophyIcon, ChartLineIcon,BallFootballIcon } from "vue-tabler-icons";
+import {
+  ClockIcon,
+  TrophyIcon,
+  ChartLineIcon,
+  BallFootballIcon,
+} from "vue-tabler-icons";
 import { formatDate } from "~/helpers";
+import useBetStore from "~/stores/bet.store";
 
 type StateType = {
   matches: MatchModel[];
 };
 
 const props = defineProps<StateType>();
+
+// Store
+const betStore = useBetStore();
+const bets = computed(() => betStore.getBets ?? []);
 
 // Model v-model
 const modelValue = defineModel<{
@@ -232,9 +242,21 @@ function handleBetClick(match: MatchModel) {
                 variant="flat"
                 color="primary"
                 @click="handleBetClick(bet)"
+                v-if="!bets.find((beta) => beta.matchId == bet.id)?.id"
               >
                 <span class="mr-2">Parier</span>
                 <BallFootballIcon size="20" class="text-white" />
+              </v-btn>
+
+              <v-btn
+                size="small"
+                elevation="0"
+                variant="tonal"
+                color="primary"
+                v-else
+              >
+                <span class="mr-2">Déjà parié...</span>
+                <BallFootballIcon size="20" class="text-primary" />
               </v-btn>
             </v-card-actions>
           </v-card>

@@ -25,7 +25,7 @@ export interface BetModel {
   id?: string;
   uid: string;
   matchId: string | number;
-  match?: MatchModel;
+  match: MatchModel;
   prediction: string;
   win?: boolean;
   potentialGain: number;
