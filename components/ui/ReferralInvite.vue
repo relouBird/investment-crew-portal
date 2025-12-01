@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { appLink } from "~/helpers";
 import useAuthStore from "~/stores/auth.store";
 
 // gestions des stores
@@ -23,9 +24,7 @@ const snackbar = ref({
 // Lien de parrainage généré (remplacez par votre logique)
 const referralLink = computed(() => {
   // Vous devriez récupérer l'ID utilisateur depuis votre store auth
-  return `https://investment-crew-portal.vercel.app/auth/register/${
-    authStore.me?.id ?? ""
-  }`;
+  return `${appLink()}/auth/register/${authStore.me?.id ?? ""}`;
 });
 
 // Méthodes

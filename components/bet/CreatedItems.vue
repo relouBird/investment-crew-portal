@@ -111,7 +111,7 @@ function handleBetClick(bet: BetModel) {
           <v-card-text class="pa-4">
             <!-- ID du pari -->
             <div class="text-caption text-grey-darken-1 mb-3">
-              Pari #{{ String(bet.id).split('-').slice(0,3).join('-') }}
+              Pari #{{ String(bet.id).split("-").slice(0, 3).join("-") }}
             </div>
 
             <!-- Équipes -->
@@ -216,7 +216,7 @@ function handleBetClick(bet: BetModel) {
                   <span
                     class="text-h6 font-weight-bold"
                     :class="getFinalResult(bet)!.isWin ? 'text-success' : 'text-error'"
-                    v-html="getFinalResult(bet)!.isWin ? '+' : '' + formatCurrency(getFinalResult(bet)!.profit)"
+                    v-html="(getFinalResult(bet)!.isWin ? '+' : '') + formatCurrency(getFinalResult(bet)?.profit ?? 0)"
                   >
                   </span>
                 </div>
@@ -269,7 +269,7 @@ function handleBetClick(bet: BetModel) {
       v-if="bets.length === 0"
       type="info"
       variant="tonal"
-      class="text-center"
+      class="text-center mt-10"
     >
       Vous n'avez encore placé aucun pari
     </v-alert>

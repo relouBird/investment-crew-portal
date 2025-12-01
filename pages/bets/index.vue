@@ -39,8 +39,10 @@
         <v-tab value="available"
           >Paris Disponible ({{ activeMatches?.length ?? 0 }})</v-tab
         >
-        <v-tab value="active">Paris Actifs ({{ activesBets.length ?? 0 }})</v-tab>
-        <v-tab value="completed">Terminés (15)</v-tab>
+        <v-tab value="active"
+          >Paris Actifs ({{ activesBets.length ?? 0 }})</v-tab
+        >
+        <v-tab value="completed">Terminés ({{ allBets.length ?? 0 }})</v-tab>
       </v-tabs>
 
       <v-window v-model="selectedTab">
@@ -57,32 +59,7 @@
         </v-window-item>
 
         <v-window-item value="completed">
-          <v-card elevation="0" class="border border-opacity" rounded="lg">
-            <v-card-title class="font-montserrat"
-              >Historique des paris</v-card-title
-            >
-            <v-data-table
-              :headers="completedBetsHeaders"
-              :items="completedBets"
-              class="elevation-0"
-            >
-              <template v-slot:item.status="{ item }">
-                <v-chip
-                  :color="item.status === 'won' ? 'success' : 'error'"
-                  size="small"
-                >
-                  {{ item.status === "won" ? "Gagné" : "Perdu" }}
-                </v-chip>
-              </template>
-              <template v-slot:item.result="{ item }">
-                <span
-                  :class="item.status === 'won' ? 'text-success' : 'text-error'"
-                >
-                  {{ item.result }}
-                </span>
-              </template>
-            </v-data-table>
-          </v-card>
+          <bet-completed-items :bets="allBets" />
         </v-window-item>
       </v-window>
     </v-container>
@@ -119,33 +96,30 @@ const balance = computed(() => walletStore.getWallet?.funds ?? 0);
 const selectedTab = ref("available");
 
 const activeMatches = computed(() => betStore.matches);
-const activesBets = computed(() => betStore.getBets ?? []);
+const activesBets = computed(() => {
+  let data: BetModel[] = [];
+  betStore.getBets.forEach((bet) => {
+    if (bet.match.isActive && !bet.match.isEnded) {
+      data.push(bet);
+    }
+  });
+  return data;
+});
+
+const allBets = computed(() => {
+  let data: BetModel[] = [];
+  betStore.getBets.forEach((bet) => {
+    if (bet.match.isEnded) {
+      data.push(bet);
+    }
+  });
+  return data;
+});
 
 const actions = ref<{ action: boolean; match: MatchModel | undefined }>({
   action: false,
   match: undefined,
 });
-
-const completedBetsHeaders = [
-  { title: "Match", key: "match" },
-  { title: "Prédiction", key: "prediction" },
-  { title: "Mise", key: "stake" },
-  { title: "Statut", key: "status" },
-  { title: "Résultat", key: "result" },
-  { title: "Date", key: "date" },
-];
-
-const completedBets = [
-  {
-    match: "PSG vs Real Madrid",
-    prediction: "PSG gagne",
-    stake: "€100",
-    status: "won",
-    result: "+€150",
-    date: "2024-07-18",
-  },
-  // ... more completed bets
-];
 
 // Méthodes...
 const loadBets = async () => {
