@@ -227,5 +227,5 @@ export const formatDate = (
 
 export const appLink = () => {
   const { public: publicRuntimeConfig } = useRuntimeConfig();
-  return String(publicRuntimeConfig.API_BASE_URL);
+  return String(publicRuntimeConfig.NUXT_PUBLIC_API_BASE);
 };

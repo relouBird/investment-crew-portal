@@ -65,6 +65,7 @@ export default defineNuxtConfig({
     // The private keys which are only available within server-side
     API_HOST: process.env.API_HOST,
     API_BASE_URI: process.env.API_BASE_URI,
+    NUXT_PUBLIC_API_BASE: process.env.NUXT_PUBLIC_API_BASE,
 
     // Keys within public, will be also exposed to the client-side
     public: {
@@ -79,6 +80,7 @@ export default defineNuxtConfig({
       API_BASE_URI: process.env.API_BASE_URI,
       API_BASE_URL: process.env.API_BASE_URL,
       AUTH_TOKEN_EXPIRED_AT: process.env.AUTH_TOKEN_EXPIRED_AT,
+      NUXT_PUBLIC_API_BASE: process.env.NUXT_PUBLIC_API_BASE,
     },
   },
 });

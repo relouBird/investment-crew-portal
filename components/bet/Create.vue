@@ -78,6 +78,7 @@ const confirmBet = async () => {
   const betData: BetModel = {
     matchId: props.match.id!,
     uid: userId.value,
+    match: {} as MatchModel,
     prediction: getPredictionTla(prediction.value!),
     potentialGain: potentialGain.value,
     potentialLoss: potentialLoss.value,

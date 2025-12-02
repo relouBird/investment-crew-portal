@@ -1,9 +1,21 @@
 <script setup lang="ts">
 import { product_PerformanceData } from "~/constants/dashboard.constant";
+import useSponsoringStore from "~/stores/sponsoring.store";
+import type { SponsoringModel } from "~/types/sponsoring.type";
+const sponsoringStore = useSponsoringStore();
+
+const sponsored = computed(() => {
+  const first = sponsoringStore.items;
+  let tab: SponsoringModel[] = [];
+  for (let i = 0; i < 3; i++) {
+    tab.push(first[i] ? first[i] : ({} as SponsoringModel));
+  }
+  return tab;
+});
 </script>
 
 <template>
-  <v-card elevation="0" flat class="w-100 border rounded-lg">
+  <v-card elevation="0" flat class="w-100 border rounded-lg" v-if="sponsoringStore.sponsorCount">
     <span class="lstick"></span>
 
     <v-card-text>
@@ -19,48 +31,54 @@ import { product_PerformanceData } from "~/constants/dashboard.constant";
         <v-table class="month-table">
           <thead>
             <tr>
-              <th class="font-weight-medium text-subtitle-1">Assigned</th>
-              <th class="font-weight-medium text-subtitle-1">Name</th>
-              <th class="font-weight-medium text-subtitle-1">Priority</th>
-              <th class="font-weight-medium text-subtitle-1">Budget</th>
+              <th class="font-weight-medium text-subtitle-1">Initials</th>
+              <th class="font-weight-medium text-subtitle-1">Nom</th>
+              <th class="font-weight-medium text-subtitle-1">Email</th>
+              <th class="font-weight-medium text-subtitle-1">Premier dépôt</th>
             </tr>
           </thead>
           <tbody>
-            <tr
-              v-for="item in product_PerformanceData"
-              :key="item.leadname"
-              :class="item.activestate"
-              class="month-item"
-            >
-              <td>
+            <tr v-for="(item, key) in sponsored" :key="key" class="month-item">
+              <td v-if="item.initials">
                 <div class="d-flex align-center py-2">
-                  <v-avatar size="40">
-                    <img :src="item.img" :alt="item.img" width="40" />
+                  <v-avatar color="primary" size="40">
+                    <span class="text-white font-weight-bold">{{
+                      item.initials
+                    }}</span>
                   </v-avatar>
                 </div>
               </td>
-              <td>
+              <td v-else></td>
+
+              <td v-if="item.name">
                 <h5 class="text-no-wrap text-body-1">
-                  {{ item.projectname }}
+                  {{ item.name }}
                 </h5>
               </td>
-              <td>
+              <td v-else></td>
+
+              <td v-if="item.email">
+                <h5 class="text-no-wrap text-body-1">
+                  {{ item.email }}
+                </h5>
+              </td>
+              <td v-else></td>
+
+              <td
+                v-if="
+                  item.firstDeposit != undefined && item.firstDeposit != null
+                "
+              >
                 <v-chip
                   class="ma-2 rounded-lg"
-                  :color="item.statuscolor"
+                  :color="item.firstDeposit ? 'success' : 'error'"
                   size="small"
                   label
                 >
-                  {{ item.statustext }}
+                  {{ item.firstDeposit ? "Oui" : "Non" }}
                 </v-chip>
               </td>
-              <td>
-                <h4
-                  class="text-no-wrap text-body-2 opacity-80 font-weight-thin"
-                >
-                  {{ item.money }}
-                </h4>
-              </td>
+              <td v-else></td>
             </tr>
           </tbody>
         </v-table>

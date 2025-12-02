@@ -1,18 +1,16 @@
 <script lang="ts" setup>
 import { appLink } from "~/helpers";
 import useAuthStore from "~/stores/auth.store";
+import useSponsoringStore from "~/stores/sponsoring.store";
 
 // gestions des stores
 const authStore = useAuthStore();
+const sponsoringStore = useSponsoringStore();
 
 // État réactif
 const copied = ref(false);
-
-// Données de parrainage (à remplacer par des données réelles de votre store)
-const referralStats = ref({
-  totalInvites: 0,
-  successfulReferrals: 0,
-});
+const totalInvites = computed(() => sponsoringStore.getCount);
+const successfulReferrals = computed(() => sponsoringStore.sponsorCount);
 
 // Snackbar pour les notifications
 const snackbar = ref({
@@ -24,7 +22,7 @@ const snackbar = ref({
 // Lien de parrainage généré (remplacez par votre logique)
 const referralLink = computed(() => {
   // Vous devriez récupérer l'ID utilisateur depuis votre store auth
-  return `${appLink()}/auth/register/${authStore.me?.id ?? ""}`;
+  return `${appLink()}/auth/register?parrains=${authStore.me?.id ?? ""}`;
 });
 
 // Méthodes
@@ -32,6 +30,7 @@ const copyToClipboard = async () => {
   try {
     await navigator.clipboard.writeText(referralLink.value);
     copied.value = true;
+    sponsoringStore.increment();
     showNotification("Lien copié dans le presse-papiers !", "success");
 
     setTimeout(() => {
@@ -68,7 +67,7 @@ const showNotification = (message: string, color: string) => {
         <v-col cols="6">
           <div class="text-center">
             <div class="text-h4 text-primary font-weight-bold">
-              {{ referralStats.totalInvites }}
+              {{ totalInvites }}
             </div>
             <div class="text-caption text-medium-emphasis">
               Invitations envoyées
@@ -78,7 +77,7 @@ const showNotification = (message: string, color: string) => {
         <v-col cols="6">
           <div class="text-center">
             <div class="text-h4 text-success font-weight-bold">
-              {{ referralStats.successfulReferrals }}
+              {{ successfulReferrals }}
             </div>
             <div class="text-caption text-medium-emphasis">
               Parrainages réussis
