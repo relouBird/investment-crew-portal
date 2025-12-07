@@ -42,7 +42,8 @@ const useBetStore = defineStore("bet-store", {
 
       if (response.status === 201) {
         let datas = response.data as BetModelResponse;
-        this.items.push(datas.data);
+        let creas = [...this.items, datas.data];
+        this.items = creas;
 
         notify({
           color: "success",

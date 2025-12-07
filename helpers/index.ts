@@ -224,3 +224,8 @@ export const formatDate = (
 
   return new Intl.DateTimeFormat(locale, customOptions).format(d);
 };
+
+export const appLink = () => {
+  const { public: publicRuntimeConfig } = useRuntimeConfig();
+  return String(publicRuntimeConfig.NUXT_PUBLIC_API_BASE);
+};
