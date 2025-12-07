@@ -22,6 +22,8 @@
     </div>
 
     <v-container fluid class="pa-0" v-else>
+      <ui-deposit-dialog v-if="ifExpose" />
+
       <div class="mb-6">
         <v-row class="d-flex align-center justify-space-between flex-wrap">
           <!-- Titre -->
@@ -142,9 +144,11 @@ import { formatCurrency, formatDate } from "~/helpers";
 import useTransactionStore from "~/stores/transaction.store";
 import { type TransactionModel } from "~/types/transaction.type";
 import transactionComposable from "~/composables/transaction-handler";
+import useWalletStore from "~/stores/wallet.store";
 
 // Stores
 const transactionStore = useTransactionStore();
+const walletStore = useWalletStore();
 
 definePageMeta({
   layout: "default",
@@ -159,6 +163,12 @@ const transactions = computed(() =>
 );
 const isLoading = ref<boolean>(false);
 const search = ref("");
+
+const ifExpose = computed(
+  () =>
+    transactionStore.getTransactions?.length == 0 &&
+    walletStore.getWallet?.funds == 0
+);
 
 const {
   // Montants

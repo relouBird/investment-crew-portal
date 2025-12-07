@@ -62,6 +62,8 @@
           <bet-completed-items :bets="allBets" />
         </v-window-item>
       </v-window>
+
+      <ui-deposit-dialog v-if="ifExpose" />
     </v-container>
 
     <bet-create
@@ -76,6 +78,7 @@
 <script setup lang="ts">
 import { LoaderAreas } from "~/constants";
 import useBetStore from "~/stores/bet.store";
+import useTransactionStore from "~/stores/transaction.store";
 import useWalletStore from "~/stores/wallet.store";
 import type { BetModel, MatchModel } from "~/types/bet.type";
 
@@ -87,11 +90,18 @@ definePageMeta({
 // Stores
 const betStore = useBetStore();
 const walletStore = useWalletStore();
+const transactionStore = useTransactionStore();
 
 // Valeurs réactives...
 const isLoading = ref<boolean>(false);
 const isCreateBet = ref<boolean>(false);
 const balance = computed(() => walletStore.getWallet?.funds ?? 0);
+
+const ifExpose = computed(
+  () =>
+    transactionStore.getTransactions?.length == 0 &&
+    walletStore.getWallet?.funds == 0
+);
 
 const selectedTab = ref("available");
 
