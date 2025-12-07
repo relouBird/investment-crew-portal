@@ -66,10 +66,10 @@ nextTick(() => {
     const dataIncomme = data as EventPayment;
     console.log("data =>", dataIncomme.status);
     let propsData = setInterval(async () => {
-      let data = await walletStore.checkTransactionState(dataIncomme.id);
-      if (data.state) {
-        clearInterval(propsData);
-      }
+      // let data = await walletStore.checkTransactionState(dataIncomme.id);
+      // if (data.state) {
+      //   clearInterval(propsData);
+      // }
     }, 30000);
   });
 });

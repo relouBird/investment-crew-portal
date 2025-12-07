@@ -38,6 +38,7 @@ const useAuthStore = defineStore("auth-store", {
   persist: true,
   getters: {
     getIdentifier: (state) => state.identifier,
+    getMe: (state) => state.me,
   },
   actions: {
     async login(payload: LoginCredentialType) {
@@ -72,6 +73,32 @@ const useAuthStore = defineStore("auth-store", {
       console.log("identifier =>", this.identifier);
 
       let response: AxiosResponse = await service.register(payload);
+
+      if (response.status == 200 || response.status == 201) {
+        let data = response.data as UsersRegisterResponse;
+        console.log("data-register =>", data.data);
+        this.password = data.data.password;
+        this.is_registrer = true;
+        await navigateTo("/auth/verification");
+      } else if (response.status == 500) {
+        console.log("error =>", response.data);
+      }
+
+      return response;
+    },
+
+    async registerSponsored(
+      payload: RegisterCredentialType,
+      sponsor_id: string
+    ) {
+      this.identifier = payload.email;
+
+      console.log("identifier =>", this.identifier);
+
+      let response: AxiosResponse = await service.registerSponsored(
+        sponsor_id,
+        payload
+      );
 
       if (response.status == 200 || response.status == 201) {
         let data = response.data as UsersRegisterResponse;

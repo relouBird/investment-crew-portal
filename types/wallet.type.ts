@@ -1,7 +1,9 @@
+import type { TransactionModel } from "./transaction.type";
+
 export type PAYMENT_METHOD = "cm.mtn" | "cm.orange";
 // export type PAYMENT_METHOD = "MTN" | "ORANGE";
 
-export interface WalletInterface {
+export interface WalletModel {
   id: number;
   funds: number;
   growth: number;
@@ -15,15 +17,6 @@ export interface RefillWalletType {
   amount: number;
 }
 
-export interface UserWalletTransaction {
-  id: number;
-  transaction_id: string;
-  creator_id: string;
-  amount: number;
-  type: "deposit" | "withdrawal" | "transfer";
-  status: "done" | "pending" | "failed";
-  created_at: string | Date;
-}
 
 export interface WalletTransactionInitInterface extends RefillWalletType {
   transaction_id: string;
@@ -31,16 +24,10 @@ export interface WalletTransactionInitInterface extends RefillWalletType {
 
 export interface WalletResponse {
   message: string;
-  data: WalletInterface;
+  data: WalletModel;
 }
 
-export interface TransactionInitResponse {
+export interface WalletTransactionInitResponse {
   message: string;
   data: WalletTransactionInitInterface;
-}
-
-export interface TransactionResponse {
-  message: string;
-  wallet: WalletInterface;
-  transaction: UserWalletTransaction;
 }

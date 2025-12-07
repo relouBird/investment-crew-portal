@@ -5,7 +5,7 @@ import { formatBalance } from "~/helpers/utils";
 type UiCongratulationCardType = {
   name: string;
   funds: number;
-  growth: number;
+  growth: string;
 };
 
 const props = defineProps<UiCongratulationCardType>();
@@ -29,16 +29,16 @@ const showDepositDialog = ref(false);
         &#x244; {{ formatBalance(funds) }}
         <span
           class="text-subtitle-1 ml-2 d-flex align-center text-success"
-          v-if="growth >= 0"
+          v-if="!growth.includes('-')"
         >
-          <ArrowUpLeftIcon size="18" />+{{ growth }}%
+          <ArrowUpLeftIcon size="18" />+{{ growth }}
         </span>
 
         <span
           class="text-subtitle-1 ml-2 d-flex align-center text-error"
           v-else
         >
-          <ArrowDownRightIcon size="18" />{{ growth }}%
+          <ArrowDownRightIcon size="18" />{{ growth }}
         </span>
       </h2>
       <v-btn

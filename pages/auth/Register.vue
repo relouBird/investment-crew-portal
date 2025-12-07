@@ -6,7 +6,7 @@ import type { RegisterCredentialType } from "~/types/user.type";
 // Définir le layout à utiliser
 definePageMeta({
   layout: "auth",
-  middleware: "auth-default"
+  middleware: "auth-default",
 });
 
 // Meta tags
@@ -15,12 +15,14 @@ useHead({
   meta: [{ name: "description", content: "Enregistrez-vous sur InvestIA" }],
 });
 
+const route = useRoute();
 const authStore = useAuthStore();
 const store = storeToRefs(authStore);
 
 // Variables réactives
 const showPassword = ref(false);
 const loading = ref(false);
+const sponsoring = ref<string>("");
 
 // 🔹 Créer un formulaire réactif
 const form = useForm(
@@ -51,10 +53,23 @@ const form = useForm(
 const handleLogin = async () => {
   loading.value = true;
 
+  sponsoring.value = route.query.parrains as string;
+
   try {
-    const response = await form.submit(
-      async () => await authStore.register(form.data as RegisterCredentialType)
-    );
+    if (sponsoring.value != "") {
+      await form.submit(
+        async () =>
+          await authStore.registerSponsored(
+            form.data as RegisterCredentialType,
+            sponsoring.value
+          )
+      );
+    } else {
+      await form.submit(
+        async () =>
+          await authStore.register(form.data as RegisterCredentialType)
+      );
+    }
 
     form.clear();
     form.data.password = "";
