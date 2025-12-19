@@ -48,8 +48,10 @@ const useWalletStore = defineStore("wallet-store", {
     async refillWallet(payload: RefillWalletType) {
       let proto_payload: RefillWalletType = {
         amount: payload.amount,
-        transaction_number: "+237670000000",
-        service: "cm.mtn",
+        // transaction_number: "+237670000000",
+        transaction_number: payload.transaction_number,
+        service: payload.service,
+        // service: "cm.mtn",
       };
       let response: AxiosResponse = await service.refill(proto_payload); // à remplacer par payload lors du build...
 
@@ -73,18 +75,20 @@ const useWalletStore = defineStore("wallet-store", {
     },
 
     async withDrawal(payload: RefillWalletType) {
-      let response: AxiosResponse = await service.withdrawal(payload);
+      let proto_payload: RefillWalletType = {
+        amount: payload.amount,
+        // transaction_number: "+237670000000",
+        transaction_number: payload.transaction_number,
+        // service: "cm.mtn",
+        service: payload.service,
+      };
+      console.log("DATA-TO-POST=========>", proto_payload);
+
+      let response: AxiosResponse = await service.withdrawal(proto_payload);
 
       if (response.status == 200 || response.status == 201) {
         let data = response.data as WalletTransactionInitResponse;
         console.log("data-getted-message =>", data.message);
-
-        const { $emitter } = useNuxtApp();
-
-        $emitter.emit("payment:started", {
-          id: data.data.transaction_id,
-          status: response.status,
-        });
       } else if (response.status == 500) {
         console.log("error =>", response.data);
       } else {
@@ -93,34 +97,6 @@ const useWalletStore = defineStore("wallet-store", {
 
       return response;
     },
-
-    // async checkTransactionState(id: string) {
-    //   let isFinish: boolean = false;
-    //   let response: AxiosResponse = await service.check(id);
-
-    //   if (response.status == 200 || response.status == 201) {
-    //     let data = response.data as TransactionResponse;
-    //     console.log("data-transaction-getted-message =>", data.message);
-    //     if (data.transaction.status == "done") {
-    //       this.wallet = { ...this.wallet, ...data.wallet };
-    //       isFinish = true;
-    //     } else if (data.transaction.status == "failed") {
-    //       // Ceci envoie la notification directement dans le store de notifications mais àa partir du helpers
-    //       notify({
-    //         color: "error",
-    //         message: "The Transaction has failed...",
-    //         visible: true,
-    //       });
-    //       isFinish = true;
-    //     }
-    //   } else if (response.status == 500) {
-    //     console.log("error =>", response.data);
-    //   } else {
-    //     console.log("error =>", response.data);
-    //   }
-
-    //   return { state: isFinish, response };
-    // },
   },
 });
 

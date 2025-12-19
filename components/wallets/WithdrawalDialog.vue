@@ -3,20 +3,15 @@ import IMG1 from "~/assets/images/payments/logo-momo.jpg";
 import IMG2 from "~/assets/images/payments/orange-money.jpg";
 import * as yup from "yup";
 import { WalletDepositConversion } from "~/helpers/wallet-help";
-import type { EventPayment } from "~/types";
 import useWalletStore from "~/stores/wallet.store";
 import useTransactionStore from "~/stores/transaction.store";
-import { notify } from "~/helpers/notifications";
 
 const props = defineProps<{
   modelValue: boolean;
 }>();
 
-const { $emitter } = useNuxtApp();
-
 // gestion des stores
 const walletStore = useWalletStore();
-const transactionStore = useTransactionStore();
 
 const emit = defineEmits(["update:modelValue"]);
 
@@ -40,14 +35,14 @@ const paymentMethods = [
 ];
 
 // Méthodes
-const processDeposit = async () => {
+const processWithdraw = async () => {
   loading.value = true;
 
   try {
     await form.submit(async () => {
       const dataToRefill = WalletDepositConversion(form.data);
       console.log("props =>", dataToRefill);
-      return await walletStore.refillWallet(dataToRefill);
+      return await walletStore.withDrawal(dataToRefill);
     });
 
     form.clear();
@@ -62,34 +57,6 @@ const processDeposit = async () => {
 const closeDialog = () => {
   emit("update:modelValue", false);
 };
-
-nextTick(() => {
-  $emitter.on("payment:started", (data) => {
-    const dataIncomme = data as EventPayment;
-    console.log("data =>", dataIncomme.status);
-    let propsData = setInterval(async () => {
-      let data = await transactionStore.find(dataIncomme.id);
-      if (transactionStore.selected?.status == "failed") {
-        clearInterval(propsData);
-        notify({
-          color: "error",
-          message: "The Transaction has failed...",
-          visible: true,
-        });
-      } else if (transactionStore.selected?.status == "done") {
-        clearInterval(propsData);
-        notify({
-          color: "success",
-          message: "The Transaction has successful done...",
-          visible: true,
-        });
-        walletStore.wallet = transactionStore.wallet;
-      } else {
-        // CONTINUE
-      }
-    }, 15000);
-  });
-});
 </script>
 
 <template>
@@ -98,11 +65,13 @@ nextTick(() => {
     v-model="props.modelValue"
     @update:model-value="emit('update:modelValue', $event)"
     max-width="450px"
+    persistent
   >
     <v-card elevation="0">
-      <v-card-title class="text-h6 font-montserrat"
-        >Effectuer un dépôt</v-card-title
-      >
+      <v-card-title>
+        <p class="text-h6 font-weight-bold pb-0">Effectuer un Retrait</p>
+        <p class="text-caption opacity-70 pt-0">Ceci permet d'effectuer un retrait vers votre compte</p>
+      </v-card-title>
       <v-card-text>
         <form class="form">
           <v-text-field
@@ -115,6 +84,7 @@ nextTick(() => {
             variant="outlined"
             color="primary"
             class="mb-4"
+            hide-details
           ></v-text-field>
 
           <v-select
@@ -125,7 +95,6 @@ nextTick(() => {
             label="Méthode de paiement"
             variant="outlined"
             color="primary"
-            class="mb-2"
           >
             <template <template v-slot:item="{ props, item }">
               <v-list-item v-bind="props">
@@ -157,17 +126,14 @@ nextTick(() => {
             prefix="+237"
             variant="outlined"
             color="primary"
-            class="mb-7"
-            hide-details
           ></v-text-field>
         </form>
-
         <v-alert
           type="info"
           icon-size="22"
           variant="tonal"
           rounded="md"
-          class="border border-info"
+          class="border border-info mt-2"
           density="compact"
         >
           <p class="text-body-2 mb-0">
@@ -178,9 +144,9 @@ nextTick(() => {
       </v-card-text>
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn @click="closeDialog" variant="text"> Annuler </v-btn>
+        <v-btn @click="closeDialog" variant="text" class="opacity-70"> Annuler </v-btn>
         <v-btn
-          @click="processDeposit"
+          @click="processWithdraw"
           type="submit"
           :disabled="
             (form.isInValid instanceof Object
