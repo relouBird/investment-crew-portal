@@ -33,7 +33,12 @@
 
           <!-- Boutons -->
           <v-col cols="12" md="6" class="d-flex justify-end flex-wrap">
-            <v-btn color="primary" class="mr-2" prepend-icon="mdi-plus">
+            <v-btn
+              color="primary"
+              class="mr-2"
+              prepend-icon="mdi-plus"
+              @click="showDepositDialog = true"
+            >
               Dépôt
             </v-btn>
             <v-btn
@@ -41,6 +46,7 @@
               variant="outlined"
               class=""
               prepend-icon="mdi-minus"
+              @click="showWithdrawalDialog = true"
             >
               Retrait
             </v-btn>
@@ -52,7 +58,7 @@
       <v-row class="mb-6">
         <v-col
           cols="12"
-          md="4"
+          md="6"
           lg="3"
           v-for="balance in balanceSummary"
           :key="balance.title"
@@ -130,6 +136,10 @@
         </v-data-table>
       </v-card>
     </v-container>
+
+    <!-- Deposit Dialog -->
+    <wallets-deposit-dialog v-model:model-value="showDepositDialog" />
+    <wallets-withdrawal-dialog v-model:model-value="showWithdrawalDialog" />
   </ui-loader>
 </template>
 
@@ -163,6 +173,8 @@ const transactions = computed(() =>
 );
 const isLoading = ref<boolean>(false);
 const search = ref("");
+const showDepositDialog = ref(false);
+const showWithdrawalDialog = ref(false);
 
 const ifExpose = computed(
   () =>

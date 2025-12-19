@@ -141,9 +141,7 @@ const transactionComposable = (transactions: Ref<TransactionModel[]>) => {
     });
 
     transactions.value.forEach((tx) => {
-      if (
-        tx.type === TRANSACTION_TYPE.GAIN
-      ) {
+      if (tx.type === TRANSACTION_TYPE.GAIN) {
         stats.totalWins += tx.amount;
       }
     });
@@ -158,13 +156,15 @@ const transactionComposable = (transactions: Ref<TransactionModel[]>) => {
       let totalExpenses = 0;
 
       transactions.value.forEach((tx) => {
-        if (
-          tx.type === TRANSACTION_TYPE.DEPOSIT ||
-          tx.type === TRANSACTION_TYPE.GAIN
-        ) {
-          totalIncome += tx.amount;
-        } else {
-          totalExpenses += tx.amount;
+        if (tx.status == "done") {
+          if (
+            tx.type === TRANSACTION_TYPE.DEPOSIT ||
+            tx.type === TRANSACTION_TYPE.GAIN
+          ) {
+            totalIncome += tx.amount;
+          } else {
+            totalExpenses += tx.amount;
+          }
         }
       });
 
