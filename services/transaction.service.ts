@@ -38,7 +38,7 @@ export default function useTransactionService(): ServiceProps {
   ): Promise<AxiosResponse> => {
     const productId = getIdForRequest(transaction);
 
-    return await request(`/transaction/${productId}`, {
+    return await request(`/transaction/${productId}/check`, {
       method: "get",
       params: query,
     });

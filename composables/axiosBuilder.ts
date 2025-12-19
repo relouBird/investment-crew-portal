@@ -25,6 +25,7 @@ export default function axiosBuilder() {
 
     if (!config.headers["x-request-id"]) {
       config.headers["x-request-id"] = requestId;
+      config.headers["ngrok-skip-browser-warning"] = requestId;
     }
 
     if (config.headers && config.headers["Content-Type"]) {

@@ -32,6 +32,12 @@ export interface TransactionResponse {
   data: TransactionModel;
 }
 
+export interface TransactionCheckResponse {
+  message: string;
+  transaction: TransactionModel;
+  wallet : WalletModel;
+}
+
 export interface TransactionsResponse {
   message: string;
   data: TransactionModel[];
