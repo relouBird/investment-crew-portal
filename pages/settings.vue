@@ -58,7 +58,6 @@ const confirmCloseAccount = async () => {
   loading.value = true;
   try {
     await meStore.deleteAccount();
-    await authStore.signOut();
     await meStore.clearMeData();
   } catch (error) {
     console.log("erreur =>", error);
