@@ -165,6 +165,13 @@ definePageMeta({
   middleware: ["auth"],
 });
 
+// Meta tags
+useSeoHead({
+  title: "Transactions",
+  subtitle: "Historique de vos transactions",
+  forcePrefix: true,
+});
+
 // Valeurs réactives...
 const transactions = computed(() =>
   transactionStore.getTransactions

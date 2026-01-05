@@ -19,3 +19,10 @@ export type EventsProps = {
   "payment:status": void;
   "transfer:status": void;
 };
+
+export type SeoMetaOptions = {
+  title?: string | null;
+  subtitle?: string | null;
+  description?: string | null;
+  forcePrefix?: boolean;
+}

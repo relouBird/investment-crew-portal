@@ -10,9 +10,10 @@ definePageMeta({
 });
 
 // Meta tags
-useHead({
-  title: "S'enregistrer - InvestIA",
-  meta: [{ name: "description", content: "Enregistrez-vous sur InvestIA" }],
+useSeoHead({
+  title: "S'enregistrer",
+  subtitle: "Enregistrez-vous sur notre plateforme",
+  forcePrefix : true,
 });
 
 const route = useRoute();

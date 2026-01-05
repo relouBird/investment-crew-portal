@@ -10,11 +10,10 @@ definePageMeta({
 });
 
 // Meta tags
-useHead({
-  title: "Mot de passe oublié ? - InvestIA",
-  meta: [
-    { name: "description", content: "Retrouvez votre mot de passe maintenant" },
-  ],
+useSeoHead({
+  title: "Mot de passe oublié ?",
+  subtitle: "Retrouvez votre mot de passe maintenant",
+  forcePrefix : true,
 });
 
 const authStore = useAuthStore();

@@ -10,9 +10,10 @@ definePageMeta({
 });
 
 // Meta tags
-useHead({
-  title: "Se Connecter - InvestIA",
-  meta: [{ name: "description", content: "connectez-vous sur InvestIA" }],
+useSeoHead({
+  title: "Se Connecter",
+  subtitle: "Connectez-vous à votre tableau de bord",
+  forcePrefix : true,
 });
 
 const authStore = useAuthStore();

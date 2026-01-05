@@ -87,6 +87,12 @@ definePageMeta({
   middleware: ["auth"],
 });
 
+useSeoHead({
+  title: "Mes Paris",
+  subtitle: "Tout vos paris sur notre plateforme",
+  forcePrefix: true,
+});
+
 // Stores
 const betStore = useBetStore();
 const walletStore = useWalletStore();

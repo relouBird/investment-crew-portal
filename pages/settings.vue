@@ -9,6 +9,13 @@ definePageMeta({
   middleware: ["auth"],
 });
 
+// Meta tags
+useSeoHead({
+  title: "Settings",
+  subtitle: "Paramètres de votre compte",
+  forcePrefix: true,
+});
+
 // Composables
 const authStore = useAuthStore();
 const meStore = useMeStore();

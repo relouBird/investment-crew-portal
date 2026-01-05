@@ -9,9 +9,10 @@ definePageMeta({
 });
 
 // Meta tags
-useHead({
-  title: "Confirmation - InvestIA",
-  meta: [{ name: "description", content: "Verification sur InvestIA" }],
+useSeoHead({
+  title: "Confirmation",
+  subtitle: "Verification sur notre plateforme",
+  forcePrefix : true,
 });
 
 //store

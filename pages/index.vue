@@ -14,9 +14,10 @@ definePageMeta({
 });
 
 // Meta tags
-useHead({
-  title: "Bienvenue - InvestIA",
-  meta: [{ name: "description", content: "Bienvenue sur InvestIA" }],
+useSeoHead({
+  title: "Bienvenue",
+  subtitle: "Bienvenue sur notre plateforme",
+  forcePrefix: true,
 });
 
 //store
