@@ -5,14 +5,14 @@ import * as yup from "yup";
 // Définir le layout à utiliser
 definePageMeta({
   layout: "auth",
-  middleware: "auth-default"
+  middleware: "auth-default",
 });
 
 // Meta tags
 useSeoHead({
   title: "Confirmation",
   subtitle: "Verification sur notre plateforme",
-  forcePrefix : true,
+  forcePrefix: true,
 });
 
 //store
@@ -62,7 +62,10 @@ const resendOTP = async () => {
   <div class="auth-container">
     <div class="title">
       <h2>Fine, You're on Investia !</h2>
-      <p>Please enter your otp code for completion</p>
+      <p>
+        Please enter OTP you received on
+        {{ authStore.identifier.slice(0, 5) }}****** for completion
+      </p>
     </div>
     <form class="form" @submit.prevent="handleLogin">
       <v-otp-input

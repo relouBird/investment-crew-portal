@@ -6,14 +6,14 @@ import type { RegisterCredentialType } from "~/types/user.type";
 // Définir le layout à utiliser
 definePageMeta({
   layout: "auth",
-  middleware: "auth-default"
+  middleware: "auth-default",
 });
 
 // Meta tags
 useSeoHead({
   title: "Mot de passe oublié ?",
   subtitle: "Retrouvez votre mot de passe maintenant",
-  forcePrefix : true,
+  forcePrefix: true,
 });
 
 const authStore = useAuthStore();
@@ -87,7 +87,11 @@ const handleLogin = async () => {
   <div class="auth-container">
     <div class="title">
       <h2>Forgot password!</h2>
-      <p>Recover your credentials here.</p>
+      <p v-if="otpState == 'step1'">Recover your credentials here.</p>
+      <p v-else>
+        Please enter OTP you received on
+        {{ authStore.identifier.slice(0, 5) }}****** for completion
+      </p>
     </div>
     <form class="form" @submit.prevent="handleLogin">
       <div v-if="otpState == 'step1'" class="">
