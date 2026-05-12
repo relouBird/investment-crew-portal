@@ -38,7 +38,7 @@ const useBetStore = defineStore("bet-store", {
     // creer un pari
     async create(bet: BetModel) {
       const response: AxiosResponse =
-        service.create && (await service.create(bet));
+        service.create && (await service.create({ ...bet, match: undefined }));
 
       if (response.status === 201) {
         let datas = response.data as BetModelResponse;
@@ -88,9 +88,18 @@ const useBetStore = defineStore("bet-store", {
     },
 
     // Recuperer tous les paris...
-    async udpate() {
+    async update() {
       const response =
-        service.update && (await service.update(this.selected, {}));
+        service.update &&
+        (await service.update(
+          {
+            ...this.selected,
+            match: undefined,
+            matchId: undefined,
+            uid: undefined,
+          },
+          {},
+        ));
       if (response.status === 200 || response.status === 201) {
         const datas = response.data as BetModelResponse;
         let index = this.items.findIndex((u) => u.id == datas.data.id);
@@ -112,6 +121,14 @@ const useBetStore = defineStore("bet-store", {
 
       this.items = this.items.filter((item) => item.id != this.selected?.id);
       return response;
+    },
+
+    async setSelected(bet: BetModel) {
+      this.selected = bet;
+    },
+
+    async removeSelected() {
+      this.selected = null;
     },
   },
 });

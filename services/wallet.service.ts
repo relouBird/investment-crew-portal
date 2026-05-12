@@ -8,7 +8,7 @@ export default function useWalletService(): ServiceProps {
    * Recuperer juste le portefeuille de la personne...
    */
   const fetch = async (): Promise<AxiosResponse> => {
-    return await request(`/wallet`, {
+    return await request(`/wallets`, {
       method: "get",
     });
   };
@@ -17,7 +17,7 @@ export default function useWalletService(): ServiceProps {
    * Recuperer juste le portefeuille de la personne...
    */
   const refill = async (payload: RefillWalletType): Promise<AxiosResponse> => {
-    return await request(`/wallet/refill-account`, {
+    return await request(`/wallets/refill-account`, {
       method: "post",
       data: payload,
     });
@@ -29,7 +29,7 @@ export default function useWalletService(): ServiceProps {
   const withdrawal = async (
     payload: RefillWalletType
   ): Promise<AxiosResponse> => {
-    return await request(`/wallet/withdraw-account`, {
+    return await request(`/wallets/withdraw-account`, {
       method: "post",
       data: payload,
     });

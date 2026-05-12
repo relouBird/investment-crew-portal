@@ -70,7 +70,10 @@ const useAuthStore = defineStore("auth-store", {
 
       console.log("identifier =>", this.identifier);
 
-      let response: AxiosResponse = await service.register(payload);
+      let response: AxiosResponse = await service.register({
+        ...payload,
+        type: "guest",
+      });
 
       if (response.status == 200 || response.status == 201) {
         let data = response.data as UsersRegisterResponse;
@@ -95,7 +98,7 @@ const useAuthStore = defineStore("auth-store", {
 
       let response: AxiosResponse = await service.registerSponsored(
         sponsor_id,
-        payload,
+        { ...payload, type: "guest" },
       );
 
       if (response.status == 200 || response.status == 201) {

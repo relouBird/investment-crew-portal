@@ -23,7 +23,7 @@ const showDepositDialog = ref(false);
     <img src="@/assets/images/profile/businessmen.png" class="bg-img-1" />
     <v-card-text>
       <h2 class="title text-h6 overlay-title">
-        Bienvenue {{ name ?? "User" }}
+        Bienvenue, <span class=" d-block d-sm-inline-block">{{ name ?? "User" }}</span>
       </h2>
       <h2 class="font-weight-bold mt-4 d-flex align-center mb-1">
         &#x244; {{ formatBalance(funds) }}

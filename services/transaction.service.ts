@@ -11,7 +11,7 @@ export default function useTransactionService(): ServiceProps {
   const create = async (
     transaction: TransactionModel
   ): Promise<AxiosResponse> => {
-    return await request(`/transaction`, {
+    return await request(`/transactions`, {
       method: "post",
       data: transaction,
     });
@@ -23,7 +23,7 @@ export default function useTransactionService(): ServiceProps {
     transaction: TransactionModel
   ): Promise<AxiosResponse> => {
     const productId = getIdForRequest(transaction);
-    return await request(`/transaction/${productId}`, {
+    return await request(`/transactions/${productId}`, {
       method: "patch",
       data: transaction,
     });
@@ -38,7 +38,7 @@ export default function useTransactionService(): ServiceProps {
   ): Promise<AxiosResponse> => {
     const productId = getIdForRequest(transaction);
 
-    return await request(`/transaction/${productId}/check`, {
+    return await request(`/transactions/${productId}/check`, {
       method: "get",
       params: query,
     });
@@ -48,7 +48,7 @@ export default function useTransactionService(): ServiceProps {
    * Récupérer toutes les transactions
    */
   const fetch = async (query?: Record<string, any>): Promise<AxiosResponse> => {
-    return await request(`/transaction`, {
+    return await request(`/transactions`, {
       method: "get",
       params: query,
     });

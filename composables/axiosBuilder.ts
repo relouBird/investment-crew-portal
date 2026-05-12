@@ -59,7 +59,7 @@ export default function axiosBuilder() {
       console.log(`[${requestId}] api-response-error  -->`, response);
       console.log(
         `[${requestId}] api-response-error  -->`,
-        errorParticularity.details
+        errorParticularity.details,
       );
 
       // Ceci envoie la notification directement dans le store de notifications mais àa partir du helpers
@@ -67,6 +67,12 @@ export default function axiosBuilder() {
         color: "error",
         message: errorParticularity.details
           ? errorParticularity.details
+          : errorParticularity.message &&
+            Array.isArray(errorParticularity.message)
+          ? errorParticularity.message[0]
+          : errorParticularity.message &&
+            !Array.isArray(errorParticularity.message)
+          ? errorParticularity.message
           : errorParticularity.error
           ? errorParticularity.error
           : "Nothing to Handle...",
@@ -76,7 +82,7 @@ export default function axiosBuilder() {
       return error.response;
 
       //   return error;
-    }
+    },
   );
 
   return {

@@ -9,6 +9,7 @@ export type RegisterCredentialType = {
   email: string;
   password: string;
   password_confirmation: string;
+  type: "guest" | "admin";
 };
 
 export type RegisterVerificationType = {
@@ -62,7 +63,6 @@ export type UserMetaData = {
   notifications: NotificationsType;
   [key: string]: any; // Index signature pour permettre des propriétés supplémentaires
 };
-
 
 export type User = {
   id: string;

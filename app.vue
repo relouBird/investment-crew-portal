@@ -23,7 +23,7 @@ watch(store.visible, (newVal) => {
   <NuxtLayout>
     <NuxtPage />
   </NuxtLayout>
-  
+
   <div class="bottom">
     <v-alert
       v-model="store.visible.value"
@@ -43,7 +43,7 @@ watch(store.visible, (newVal) => {
 
 <style scoped>
 .bottom {
-  position: absolute !important;
+  position: fixed !important;
   bottom: 5em;
   right: 2em;
   z-index: 1000;

@@ -21,14 +21,13 @@ const bets = computed(() => betStore.getBets ?? []);
 
 // Model v-model
 const modelValue = defineModel<{
-  action: boolean;
-  match: MatchModel | undefined;
+  action: string;
+  match: MatchModel | null;
 }>({
-  default: () => ({ action: "", match: undefined }),
+  default: () => ({ action: "", match: null }),
 });
 
 // Obtenir le statut du pari
-
 const getBeginningStatus = (match: MatchModel) => {
   const now = new Date();
   const startDate = new Date(match.start_at);
@@ -56,7 +55,14 @@ const getTimeRemaining = (endDate: string) => {
 
 function handleBetClick(match: MatchModel) {
   console.log("match-id =>", match.id);
-  modelValue.value = { action: true, match };
+  modelValue.value = { action: "create", match };
+}
+
+function handleUpdateBetClick(match: MatchModel) {
+  console.log("match-id =>", match.id);
+  betStore.selected =
+    bets.value.find((beta) => beta.matchId == match.id) ?? null;
+  modelValue.value = { action: "update", match };
 }
 </script>
 
@@ -253,6 +259,7 @@ function handleBetClick(match: MatchModel) {
                 elevation="0"
                 variant="tonal"
                 color="primary"
+                @click="handleUpdateBetClick(bet)"
                 v-else
               >
                 <span class="mr-2">Déjà parié...</span>

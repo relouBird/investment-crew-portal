@@ -70,7 +70,7 @@
       v-model:model-value="isCreateBet"
       :match="actions.match"
       :user-balance="balance"
-      v-if="actions.match"
+      v-if="actions.action != ''"
     />
   </ui-loader>
 </template>
@@ -106,7 +106,7 @@ const balance = computed(() => walletStore.getWallet?.funds ?? 0);
 const ifExpose = computed(
   () =>
     transactionStore.getTransactions?.length == 0 &&
-    walletStore.getWallet?.funds == 0
+    walletStore.getWallet?.funds == 0,
 );
 
 const selectedTab = ref("available");
@@ -132,9 +132,9 @@ const allBets = computed(() => {
   return data;
 });
 
-const actions = ref<{ action: boolean; match: MatchModel | undefined }>({
-  action: false,
-  match: undefined,
+const actions = ref<{ action: string; match: MatchModel | null }>({
+  action: "",
+  match: null,
 });
 
 // Méthodes...
@@ -161,10 +161,10 @@ watch(
         "actions: ",
         newValue.action,
         ", bet-id: ",
-        newValue.match.id
+        newValue.match.id,
       );
-      isCreateBet.value = newValue.action;
+      isCreateBet.value = newValue.action != "";
     }
-  }
+  },
 );
 </script>

@@ -1,6 +1,6 @@
 export function areObjectsDifferent(
   obj1: Record<string, any>,
-  obj2: Record<string, any>
+  obj2: Record<string, any>,
 ): boolean {
   const keys = Object.keys(obj1);
 
@@ -72,3 +72,6 @@ export const formatBalance = (amount: number): string => {
     maximumFractionDigits: 2,
   }).format(amount);
 };
+
+export const pause = (ms: number) =>
+  new Promise((resolve) => setTimeout(resolve, ms));
