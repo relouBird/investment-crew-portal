@@ -9,13 +9,18 @@ export type EventTransfer = {
   status: number;
 };
 
+export type EventTransferLaunch = {
+  id: string;
+  amount: number;
+};
+
 // Fonction...
 type FunctionEventPayment = (data: EventPayment) => void;
 type FunctionEventTransfer = (data: EventTransfer) => void;
 
 export type EventsProps = {
   "payment:started": FunctionEventPayment | EventPayment;
-  "transfer:started": FunctionEventTransfer | EventTransfer;
+  "transfer:started": FunctionEventTransfer | EventTransfer | EventTransferLaunch;
   "payment:status": void;
   "transfer:status": void;
 };
@@ -25,4 +30,4 @@ export type SeoMetaOptions = {
   subtitle?: string | null;
   description?: string | null;
   forcePrefix?: boolean;
-}
+};

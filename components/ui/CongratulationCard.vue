@@ -20,10 +20,11 @@ const showDepositDialog = ref(false);
     class="position-relative overflow-hidden border rounded-lg pb-1"
   >
     <span class="lstick"></span>
-    <img src="@/assets/images/profile/businessmen.png" class="bg-img-1" />
+    <img src="@/assets/images/profile/bussiness_girl.png" class="bg-img-1" />
     <v-card-text>
       <h2 class="title text-h6 overlay-title">
-        Bienvenue, <span class=" d-block d-sm-inline-block">{{ name ?? "User" }}</span>
+        Bienvenue,
+        <span class="d-block d-sm-inline-block">{{ name ?? "User" }}</span>
       </h2>
       <h2 class="font-weight-bold mt-4 d-flex align-center mb-1">
         &#x244; {{ formatBalance(funds) }}
@@ -63,9 +64,10 @@ const showDepositDialog = ref(false);
 }
 
 .bg-img-1 {
+  width: 170px !important;
   position: absolute;
-  right: -18px;
+  right: -10px;
   width: 265px;
-  top: -20px;
+  top: 0px;
 }
 </style>

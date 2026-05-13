@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { useDisplay } from "vuetify";
 import { formatCurrency, formatDate } from "~/helpers";
 import type { BetModel } from "~/types/bet.type";
 
@@ -7,6 +8,8 @@ type StateType = {
 };
 
 const props = defineProps<StateType>();
+
+const { smAndDown } = useDisplay();
 
 const VIEW_TYPE_TABLE = "table";
 const VIEW_TYPE_CARD = "card";
@@ -47,11 +50,16 @@ const getColorByWinnerState = (winner?: boolean) => {
 </script>
 <template>
   <v-card elevation="0" class="border border-opacity" rounded="lg">
-    <v-card-title class="font-montserrat d-flex justify-space-between pt-3">
+    <v-card-title
+      class="font-montserrat d-flex justify-space-between align-center pt-3"
+    >
       <div>
         <p>Historique des paris</p>
-        <p class="text-caption opacity-80">
+        <p class="text-caption opacity-80" v-if="!smAndDown">
           Ceci est l'historique complète de tout vos paris
+        </p>
+        <p class="text-caption opacity-80" else>
+          L'historique complète de vos paris.
         </p>
       </div>
       <div>
@@ -66,16 +74,16 @@ const getColorByWinnerState = (winner?: boolean) => {
         >
           <v-tooltip text="Voir sous forme de tableau">
             <template v-slot:activator="{ props }">
-              <v-btn icon :value="VIEW_TYPE_TABLE" v-bind="props">
-                <v-icon icon="mdi-table" />
+              <v-btn :size="smAndDown ? '35' : ''" icon :value="VIEW_TYPE_TABLE" v-bind="props">
+                <v-icon :size="smAndDown ? '20' : ''" icon="mdi-table" />
               </v-btn>
             </template>
           </v-tooltip>
 
           <v-tooltip text="Voir sous forme de card">
             <template v-slot:activator="{ props }">
-              <v-btn icon :value="VIEW_TYPE_CARD" v-bind="props">
-                <v-icon icon="mdi-view-grid" />
+              <v-btn :size="smAndDown ? '35' : ''" icon :value="VIEW_TYPE_CARD" v-bind="props">
+                <v-icon :size="smAndDown ? '20' : ''" icon="mdi-view-grid" />
               </v-btn>
             </template>
           </v-tooltip>
@@ -144,12 +152,7 @@ const getColorByWinnerState = (winner?: boolean) => {
           v-html="'- ' + formatCurrency(item.potentialLoss)"
         ></span>
 
-        <span
-          class="text-info"
-          v-else
-          v-html="formatCurrency(0)"
-        >
-        </span>
+        <span class="text-info" v-else v-html="formatCurrency(0)"> </span>
       </template>
 
       <template v-slot:item.date="{ item }">
@@ -160,7 +163,11 @@ const getColorByWinnerState = (winner?: boolean) => {
     </v-data-table>
 
     <div v-else class="pa-5">
-      <bet-created-items :bets="bets" :is-loading="isLoading" />
+      <bet-created-items
+        :bets="bets"
+        :is-loading="isLoading"
+        :stop-deleting="true"
+      />
     </div>
   </v-card>
 </template>

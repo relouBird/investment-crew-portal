@@ -1,14 +1,29 @@
 import type { AxiosResponse } from "axios";
 import { request } from "~/helpers/request_axios";
 import type { ServiceProps } from "~/types/common.type";
+import type { TransactionComposableResponse } from "~/types/transaction.type";
 import type { RefillWalletType } from "~/types/wallet.type";
 
-export default function useWalletService(): ServiceProps {
+export type AssignationServiceProps = ServiceProps & {
+  /**Recuperer les details juste sur le portefeuille de la personne */
+  fetchSummary: () => Promise<AxiosResponse<TransactionComposableResponse>>;
+};
+
+export default function useWalletService(): AssignationServiceProps {
   /**
    * Recuperer juste le portefeuille de la personne...
    */
   const fetch = async (): Promise<AxiosResponse> => {
     return await request(`/wallets`, {
+      method: "get",
+    });
+  };
+
+  /**
+   * Recuperer les details juste sur le portefeuille de la personne...
+   */
+  const fetchSummary = async (): Promise<AxiosResponse> => {
+    return await request(`/wallets/summary`, {
       method: "get",
     });
   };
@@ -27,7 +42,7 @@ export default function useWalletService(): ServiceProps {
    * Recuperer juste le portefeuille de la personne...
    */
   const withdrawal = async (
-    payload: RefillWalletType
+    payload: RefillWalletType,
   ): Promise<AxiosResponse> => {
     return await request(`/wallets/withdraw-account`, {
       method: "post",
@@ -43,5 +58,5 @@ export default function useWalletService(): ServiceProps {
       method: "get",
     });
   };
-  return { fetch, refill, withdrawal, check };
+  return { fetch, fetchSummary, refill, withdrawal, check };
 }

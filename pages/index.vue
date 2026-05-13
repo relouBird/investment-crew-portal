@@ -5,7 +5,12 @@ import useMeStore from "~/stores/me.store";
 import useSponsoringStore from "~/stores/sponsoring.store";
 import useTransactionStore from "~/stores/transaction.store";
 import useWalletStore from "~/stores/wallet.store";
-import type { TransactionModel } from "~/types/transaction.type";
+import type {
+  EvolutionData,
+  TransactionModel,
+  TransactionState,
+  TransactionStats,
+} from "~/types/transaction.type";
 
 // Définir le layout à utiliser
 definePageMeta({
@@ -30,18 +35,19 @@ const sponsoringStore = useSponsoringStore();
 const transactions = computed(() =>
   transactionStore.getTransactions
     ? transactionStore.getTransactions
-    : ([] as TransactionModel[])
+    : ([] as TransactionModel[]),
 );
 
-const { evolution, transactionStats } = transactionComposable(transactions);
+const evolution = computed(
+  () => walletStore.getStatitics?.evolution ?? ({} as EvolutionData),
+);
+
+const transactionStats = computed(
+  () => walletStore.getStatitics?.transactionStats ?? ({} as TransactionStats),
+);
 
 // data reactive
 const funds = computed(() => walletStore.getWallet?.funds ?? 0);
-const growth = computed(() =>
-  evolution.value.isPositive
-    ? evolution.value.percentage
-    : "-" + evolution.value.percentage
-);
 const wins = computed(() => transactionStats.value.totalWins ?? 0);
 
 onMounted(() => {
@@ -50,7 +56,7 @@ onMounted(() => {
 
 const loadTransactions = async () => {
   try {
-    await transactionStore.fetch();
+    await walletStore.getSummaryWalletData();
   } catch (e) {
   } finally {
   }
@@ -78,7 +84,7 @@ onMounted(async () => {
       <UiCongratulationCard
         :funds="funds"
         :name="meStore.getMe?.firstName ?? ''"
-        :growth="growth"
+        :growth="evolution.percentage ?? ''"
       />
     </v-col>
     <!---Purchase / Total earnings---->

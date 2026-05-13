@@ -9,6 +9,7 @@ import type { MatchModel, BetModel } from "~/types/bet.type";
 type StateType = {
   bets: BetModel[];
   isLoading: boolean;
+  stopDeleting?: boolean;
 };
 
 const betStore = useBetStore();
@@ -137,6 +138,7 @@ async function deleteBetClick(bet: BetModel) {
               color="error"
               variant="tonal"
               size="x-small"
+              v-if="!stopDeleting"
               @click="deleteBetClick(bet)"
             >
               <TrashIcon size="20" />
