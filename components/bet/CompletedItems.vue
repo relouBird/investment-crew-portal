@@ -58,7 +58,7 @@ const getColorByWinnerState = (winner?: boolean) => {
         <p class="text-caption opacity-80" v-if="!smAndDown">
           Ceci est l'historique complète de tout vos paris
         </p>
-        <p class="text-caption opacity-80" else>
+        <p class="text-caption opacity-80" v-else>
           L'historique complète de vos paris.
         </p>
       </div>
@@ -74,7 +74,7 @@ const getColorByWinnerState = (winner?: boolean) => {
         >
           <v-tooltip text="Voir sous forme de tableau">
             <template v-slot:activator="{ props }">
-              <v-btn :size="smAndDown ? '35' : ''" icon :value="VIEW_TYPE_TABLE" v-bind="props">
+              <v-btn :size="smAndDown ? '35' : '40'" icon :value="VIEW_TYPE_TABLE" v-bind="props">
                 <v-icon :size="smAndDown ? '20' : ''" icon="mdi-table" />
               </v-btn>
             </template>
@@ -82,7 +82,7 @@ const getColorByWinnerState = (winner?: boolean) => {
 
           <v-tooltip text="Voir sous forme de card">
             <template v-slot:activator="{ props }">
-              <v-btn :size="smAndDown ? '35' : ''" icon :value="VIEW_TYPE_CARD" v-bind="props">
+              <v-btn :size="smAndDown ? '35' : '40'" icon :value="VIEW_TYPE_CARD" v-bind="props">
                 <v-icon :size="smAndDown ? '20' : ''" icon="mdi-view-grid" />
               </v-btn>
             </template>
@@ -157,7 +157,7 @@ const getColorByWinnerState = (winner?: boolean) => {
 
       <template v-slot:item.date="{ item }">
         <span>
-          {{ formatDate(item.created_at) }}
+          {{ formatDate(item.created_at,'DD/MM/YYYY') }}
         </span>
       </template>
     </v-data-table>

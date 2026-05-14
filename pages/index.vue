@@ -96,10 +96,6 @@ onMounted(async () => {
     <v-col cols="12" sm="12" lg="4">
       <UiReferralInvite />
     </v-col>
-    <!---Product performence---->
-    <v-col cols="12" sm="12" lg="8">
-      <UiProductPerformance />
-    </v-col>
   </v-row>
 
   <!-- <div class="auth-container">

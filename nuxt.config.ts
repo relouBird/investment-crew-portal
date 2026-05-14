@@ -1,4 +1,5 @@
 import vuetify, { transformAssetUrls } from "vite-plugin-vuetify";
+
 export default defineNuxtConfig({
   //...
   build: {
@@ -7,6 +8,7 @@ export default defineNuxtConfig({
 
   modules: [
     "@pinia/nuxt",
+    "@nuxt/fonts",
     (_options, nuxt) => {
       nuxt.hooks.hook("vite:extendConfig", (config) => {
         // @ts-expect-error
@@ -14,6 +16,17 @@ export default defineNuxtConfig({
       });
     },
   ],
+
+  fonts: {
+    families: [
+      {
+        name: "Montserrat",
+        weights: [100, 200, 300, 400, 500, 600, 700, 800, 900],
+        styles: ["normal", "italic"],
+        provider: "npm",
+      },
+    ],
+  },
 
   vite: {
     vue: {
@@ -55,9 +68,6 @@ export default defineNuxtConfig({
     // Votre fichier CSS global
     "@/assets/css/main.css",
   ],
-
-  // Ajoutez ceci si vous rencontrez des problèmes de SSR avec Vuetify
-  ssr: false,
 
   compatibilityDate: "2025-05-28",
 
