@@ -113,7 +113,7 @@
           class="elevation-0"
         >
           <template v-slot:item.date="{ item }">
-            <p>{{ formatDate(item.created_at) }}</p>
+            <p>{{ formatDate(item.createdAt, "DD/MM/YYYY") }}</p>
           </template>
           <template v-slot:item.type="{ item }">
             <v-chip :color="getTransactionColor(item.type)" size="small">
@@ -149,15 +149,19 @@ import {
   CreditCardIcon,
   ClockExclamationIcon,
   CircleXIcon,
+  TrendingDownIcon,
+  TrendingUpIcon,
 } from "vue-tabler-icons";
 import { formatCurrency, formatDate } from "~/helpers";
-import useTransactionStore from "~/stores/transaction.store";
-import { type TransactionModel } from "~/types/transaction.type";
+import {
+  type EvolutionData,
+  type TransactionModel,
+  type TransactionStats,
+} from "~/types/transaction.type";
 import transactionComposable from "~/composables/transaction-handler";
 import useWalletStore from "~/stores/wallet.store";
 
 // Stores
-const transactionStore = useTransactionStore();
 const walletStore = useWalletStore();
 
 definePageMeta({
@@ -174,10 +178,24 @@ useSeoHead({
 
 // Valeurs réactives...
 const transactions = computed(() =>
-  transactionStore.getTransactions
-    ? transactionStore.getTransactions
-    : ([] as TransactionModel[])
+  walletStore.getStatitics?.transactions
+    ? walletStore.getStatitics.transactions
+    : ([] as TransactionModel[]),
 );
+const balance = computed(() => walletStore.getStatitics?.balance ?? 0);
+
+const evolution = computed(() =>
+  walletStore.getStatitics?.evolution
+    ? walletStore.getStatitics.evolution
+    : ({} as EvolutionData),
+);
+
+const transactionStats = computed(() =>
+  walletStore.getStatitics?.transactionStats
+    ? walletStore.getStatitics.transactionStats
+    : ({} as TransactionStats),
+);
+
 const isLoading = ref<boolean>(false);
 const search = ref("");
 const showDepositDialog = ref(false);
@@ -185,15 +203,11 @@ const showWithdrawalDialog = ref(false);
 
 const ifExpose = computed(
   () =>
-    transactionStore.getTransactions?.length == 0 &&
-    walletStore.getWallet?.funds == 0
+    walletStore.getStatitics?.transactions?.length == 0 &&
+    walletStore.getWallet?.funds == 0,
 );
 
 const {
-  // Montants
-  balance,
-  transactionStats,
-  evolution,
   // Getters
   getTransactionColor,
   getTransactionIcon,
@@ -202,7 +216,7 @@ const {
   getAmountSign,
   getStatusColor,
   getStatusLabel,
-} = transactionComposable(transactions);
+} = transactionComposable();
 
 const balanceSummary = [
   {
@@ -214,9 +228,9 @@ const balanceSummary = [
   {
     title: "Evolution",
     amount: evolution.value.amount,
-    icon: evolution.value.icon,
-    color: evolution.value.color,
     percentage: evolution.value.percentage,
+    icon: evolution.value.digit >= 0 ? TrendingUpIcon : TrendingDownIcon,
+    color: evolution.value.digit >= 0 ? "success" : "error",
   },
   {
     title: "En attente",
@@ -243,7 +257,7 @@ const transactionHeaders = [
 const loadTransactions = async () => {
   try {
     isLoading.value = true;
-    await transactionStore.fetch();
+    await walletStore.getSummaryWalletData();
   } catch (e) {
   } finally {
     isLoading.value = false;

@@ -35,7 +35,12 @@ const useAuthStore = defineStore("auth-store", {
       expired_at: null,
       is_registrer: false,
     },
-  persist: true,
+  persist: {
+    storage: {
+      getItem: (key) => useCookie(key).value ?? null,
+      setItem: (key, value) => (useCookie(key).value = value),
+    },
+  },
   getters: {
     getIdentifier: (state) => state.identifier,
     getMe: (state) => state.me,
@@ -51,15 +56,13 @@ const useAuthStore = defineStore("auth-store", {
       if (response.status == 200 || response.status == 201) {
         let data = response.data as UserResponse;
         console.log("data-login =>", data.data);
-        if (data.verify) {
-          await navigateTo("/auth/verification");
-        } else {
-          this.access_token = data.data.session.access_token;
-          this.refresh_token = data.data.session.refresh_token;
-          this.expired_at = data.data.session.expires_at * 1000;
-          this.me = data.data.user;
-          await navigateTo("/");
-        }
+        this.access_token = data.data.session.access_token;
+        this.refresh_token = data.data.session.refresh_token;
+        this.expired_at = data.data.session.expires_at * 1000;
+        this.me = data.data.user;
+        await navigateTo("/");
+      } else if (response.status == 403) {
+        await navigateTo("/auth/verification");
       } else if (response.status == 500) {
         console.log("error =>", response.data);
       }
@@ -72,7 +75,10 @@ const useAuthStore = defineStore("auth-store", {
 
       console.log("identifier =>", this.identifier);
 
-      let response: AxiosResponse = await service.register(payload);
+      let response: AxiosResponse = await service.register({
+        ...payload,
+        type: "guest",
+      });
 
       if (response.status == 200 || response.status == 201) {
         let data = response.data as UsersRegisterResponse;
@@ -89,7 +95,7 @@ const useAuthStore = defineStore("auth-store", {
 
     async registerSponsored(
       payload: RegisterCredentialType,
-      sponsor_id: string
+      sponsor_id: string,
     ) {
       this.identifier = payload.email;
 
@@ -97,7 +103,7 @@ const useAuthStore = defineStore("auth-store", {
 
       let response: AxiosResponse = await service.registerSponsored(
         sponsor_id,
-        payload
+        { ...payload, type: "guest" },
       );
 
       if (response.status == 200 || response.status == 201) {

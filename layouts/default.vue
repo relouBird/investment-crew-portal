@@ -1,4 +1,13 @@
 <script setup lang="ts">
+import {
+  ChartBarIcon,
+  CreditCardIcon,
+  Home2Icon,
+  Settings2Icon,
+  SettingsCogIcon,
+  type TablerIconComponent,
+} from "vue-tabler-icons";
+import { useDisplay } from "vuetify";
 import { formatBalance } from "~/helpers/utils";
 import useAuthStore from "~/stores/auth.store";
 import useMeStore from "~/stores/me.store";
@@ -7,7 +16,7 @@ import type { UserMetaData } from "~/types/user.type";
 
 interface NavigationItem {
   title: string;
-  icon: string;
+  icon: string | TablerIconComponent;
   to: string;
 }
 
@@ -24,6 +33,8 @@ const authStore = useAuthStore();
 const meStore = useMeStore();
 const walletStore = useWalletStore();
 
+const { smAndDown } = useDisplay();
+
 // Reactive data
 const drawer = ref(true);
 const activeTab = ref("/");
@@ -32,7 +43,7 @@ const showNotifications = ref(false);
 
 // User data
 const user = computed<UserMetaData>(
-  () => (meStore.getMe || authStore.me?.user_metadata) as UserMetaData
+  () => (meStore.getMe || authStore.me?.user_metadata) as UserMetaData,
 );
 const userName = computed(() => {
   if (user.value.firstName && user.value.lastName) {
@@ -47,10 +58,10 @@ const accountBalance = computed(() => walletStore.wallet?.funds ?? 0);
 
 // Navigation items
 const navigationItems: NavigationItem[] = [
-  { title: "Accueil", icon: "mdi-home", to: "/" },
-  { title: "Mes Paris", icon: "mdi-chart-line", to: "/bets" },
-  { title: "Transactions", icon: "mdi-credit-card", to: "/transactions" },
-  { title: "Paramètres", icon: "mdi-cog", to: "/settings" },
+  { title: "Accueil", icon: Home2Icon, to: "/" },
+  { title: "Mes Paris", icon: ChartBarIcon, to: "/bets" },
+  { title: "Transactions", icon: CreditCardIcon, to: "/transactions" },
+  { title: "Paramètres", icon: Settings2Icon, to: "/settings" },
 ];
 
 // Notifications
@@ -145,6 +156,13 @@ onMounted(async () => {
 //     user.value.name = user.value.firstName + " " + user.value.lastName;
 //   }
 // );
+
+// Sur mobile, toujours fermer le drawer au montage
+onMounted(() => {
+  if (smAndDown.value) {
+    drawer.value = false;
+  }
+});
 </script>
 
 <template>
@@ -188,10 +206,16 @@ onMounted(async () => {
             variant="flat"
           >
             <template v-slot:prepend>
-              <v-icon>{{ item.icon }}</v-icon>
+              <component
+                :is="item.icon"
+                :color="$route.path === item.to ? 'primary' : '#9ca3af'"
+                size="24"
+              />
             </template>
-            <v-list-item-title v-if="drawer || $vuetify.display.smAndDown">
-              {{ item.title }}
+            <v-list-item-title class="pl-2" v-if="drawer || $vuetify.display.smAndDown">
+              <p :class="$route.path === item.to ? 'text-white' : 'text-muted'">
+                {{ item.title }}
+              </p>
             </v-list-item-title>
           </v-list-item>
         </v-list>
@@ -226,9 +250,14 @@ onMounted(async () => {
     >
       <!-- Mobile Menu Button -->
       <v-app-bar-nav-icon
-        v-if="$vuetify.display.smAndDown"
+        v-if="!$vuetify.display.smAndDown"
         @click="drawer = !drawer"
       ></v-app-bar-nav-icon>
+      <v-app-bar-nav-icon v-else @click="drawer = !drawer">
+        <v-avatar size="35" class="mr-3">
+          <img src="~/assets/images/logo.png" width="45" alt="" />
+        </v-avatar>
+      </v-app-bar-nav-icon>
 
       <!-- Desktop Menu Toggle -->
       <v-btn
@@ -323,8 +352,12 @@ onMounted(async () => {
         size="small"
         class="text-caption"
       >
-        <v-icon size="24">{{ item.icon }}</v-icon>
-        <span class="mt-1">{{ item.title }}</span>
+        <component
+          :is="item.icon"
+          :color="$route.path === item.to ? 'primary' : '#9ca3af'"
+          size="24"
+        />
+        <span class="pt-1">{{ item.title }}</span>
       </v-btn>
     </v-bottom-navigation>
 

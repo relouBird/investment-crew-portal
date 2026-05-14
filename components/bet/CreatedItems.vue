@@ -1,19 +1,27 @@
 <script setup lang="ts">
 // UserBetsList.vue
-import { TrophyIcon } from "vue-tabler-icons";
+import { TrashIcon, TrophyIcon } from "vue-tabler-icons";
 import { formatDate, formatCurrency } from "~/helpers";
+import { pause } from "~/helpers/utils";
+import useBetStore from "~/stores/bet.store";
 import type { MatchModel, BetModel } from "~/types/bet.type";
 
 type StateType = {
   bets: BetModel[];
   isLoading: boolean;
+  stopDeleting?: boolean;
 };
+
+const betStore = useBetStore();
 
 const props = defineProps<StateType>();
 
 const emit = defineEmits<{
   "bet-click": [bet: BetModel];
 }>();
+
+// Valeurs réactives
+const isDeleting = ref<boolean>(false);
 
 // Obtenir le statut du pari
 const getBetStatus = (bet: BetModel) => {
@@ -38,9 +46,9 @@ const getScoreDisplay = (score: string) => {
 // Obtenir le texte de prédiction
 const getPredictionText = (prediction: string, match: MatchModel) => {
   switch (prediction) {
-    case match.homeTeam.tla:
+    case "home":
       return match.homeTeam.name;
-    case match.awayTeam.tla:
+    case "away":
       return match.awayTeam.name;
     case "draw":
       return "Nul";
@@ -68,17 +76,36 @@ const getFinalResult = (bet: BetModel) => {
 function handleBetClick(bet: BetModel) {
   emit("bet-click", bet);
 }
+
+async function deleteBetClick(bet: BetModel) {
+  isDeleting.value = true;
+  try {
+    betStore.setSelected(bet);
+    await pause(500);
+    await betStore.remove();
+    betStore.removeSelected();
+  } catch (error) {
+  } finally {
+    isDeleting.value = false;
+  }
+}
 </script>
 
 <template>
   <!-- Loading -->
-  <div v-if="isLoading" class="text-center py-12">
+  <div v-if="isLoading || isDeleting" class="text-center py-12">
     <v-progress-circular
       indeterminate
-      color="primary"
+      :color="isDeleting ? 'error' : 'primary'"
       size="64"
     ></v-progress-circular>
-    <p class="text-grey-darken-1 mt-4">Chargement de vos paris...</p>
+    <p class="text-grey-darken-1 mt-4">
+      {{
+        isDeleting
+          ? "Suppressions d'un de vos Paris"
+          : "Chargement de vos paris..."
+      }}
+    </p>
   </div>
 
   <!-- Liste des paris -->
@@ -101,11 +128,21 @@ function handleBetClick(bet: BetModel) {
             <v-chip
               :color="getBetStatus(bet).color"
               size="small"
-              variant="flat"
+              variant="tonal"
               :prepend-icon="getBetStatus(bet).icon"
             >
               {{ getBetStatus(bet).text }}
             </v-chip>
+            <v-btn
+              icon
+              color="error"
+              variant="tonal"
+              size="x-small"
+              v-if="!stopDeleting"
+              @click="deleteBetClick(bet)"
+            >
+              <TrashIcon size="20" />
+            </v-btn>
           </div>
 
           <v-card-text class="pa-4">
@@ -312,7 +349,11 @@ function handleBetClick(bet: BetModel) {
 
 .status-badge {
   position: absolute;
-  top: 12px;
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  gap: 8px;
+  top: 8px;
   right: 12px;
   z-index: 1;
 }

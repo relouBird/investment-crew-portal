@@ -24,6 +24,7 @@ export interface RefillWalletType {
 
 export interface WalletTransactionInitInterface extends RefillWalletType {
   transaction_id: string;
+  wallet: WalletModel;
   transaction_details: TransferResponse;
 }
 

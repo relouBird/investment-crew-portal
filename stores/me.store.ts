@@ -52,7 +52,12 @@ const useMeStore = defineStore("me-store", {
         ...(this.user as UserMetaData),
         ...payload,
       };
-      let response: AxiosResponse = await service.updateInfos(payloadToUse);
+      let response: AxiosResponse = await service.updateInfos({
+        ...payloadToUse,
+        phone: payload.phone == "" ? undefined : payload.phone,
+        status: undefined,
+        type: undefined,
+      });
 
       if (response.status == 200 || response.status == 201) {
         let data = response.data as MeResponse;

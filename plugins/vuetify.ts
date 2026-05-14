@@ -4,8 +4,8 @@ import * as components from "vuetify/components";
 import * as directives from "vuetify/directives";
 import { aliases, mdi } from "vuetify/iconsets/mdi";
 import "@mdi/font/css/materialdesignicons.css";
+// @ts-ignore: Vuetify styles side-effect import has no type declarations
 import "vuetify/styles";
-import { lighten } from "vuetify/lib/util/colorUtils.mjs";
 
 export default defineNuxtPlugin((nuxtApp) => {
   const vuetify = createVuetify({
@@ -24,6 +24,7 @@ export default defineNuxtPlugin((nuxtApp) => {
         light:{
           colors:{
             primary:"#1e3a8a",
+            muted: "#69707c",
           }
         }
       }

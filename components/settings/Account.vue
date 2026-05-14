@@ -25,8 +25,8 @@ const formUpdateInfos = useForm(
   // Schéma de validation Yup
   yup.object().shape({
     email: yup.string().email().required(),
-    firstName: yup.string().min(5).max(10).required(),
-    lastName: yup.string().min(5).max(10).required(),
+    firstName: yup.string().min(5).max(15).required(),
+    lastName: yup.string().min(5).max(15).required(),
     country: yup.string(),
     phone: yup.string(),
   }),

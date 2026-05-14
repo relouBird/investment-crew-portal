@@ -13,7 +13,7 @@ definePageMeta({
 useSeoHead({
   title: "S'enregistrer",
   subtitle: "Enregistrez-vous sur notre plateforme",
-  forcePrefix : true,
+  forcePrefix: true,
 });
 
 const route = useRoute();
@@ -35,7 +35,7 @@ const form = useForm(
       .min(6, "Password is too weak")
       .matches(
         /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]+$/,
-        "Password must contains letters and numbers"
+        "Password must contains letters and numbers",
       )
       .required("Password is required"),
     password_confirmation: yup
@@ -47,28 +47,30 @@ const form = useForm(
     email: store.identifier.value ?? "",
     password: "",
     password_confirmation: "",
-  }
+  },
 );
 
 // Méthodes
-const handleLogin = async () => {
+const handleRegister = async () => {
   loading.value = true;
 
-  sponsoring.value = route.query.parrains as string;
+  const raw = route.query.parrains;
+  const sponsorId = Array.isArray(raw) ? raw[0] : raw; // au cas où il y aurait plusieurs fois le paramètre
+  sponsoring.value = typeof sponsorId === "string" ? sponsorId.trim() : "";
 
   try {
-    if (sponsoring.value != "") {
+    if (sponsoring.value) {
       await form.submit(
         async () =>
           await authStore.registerSponsored(
             form.data as RegisterCredentialType,
-            sponsoring.value
-          )
+            sponsoring.value,
+          ),
       );
     } else {
       await form.submit(
         async () =>
-          await authStore.register(form.data as RegisterCredentialType)
+          await authStore.register(form.data as RegisterCredentialType),
       );
     }
 
@@ -94,7 +96,7 @@ watch(form.data, () => {
       <p class="pt-0">Add your personal information to continue.</p>
     </div>
 
-    <form class="form" @submit.prevent="handleLogin">
+    <form class="form" @submit.prevent="handleRegister">
       <div class="input-wrapper">
         <label for="password">Email</label>
         <v-text-field

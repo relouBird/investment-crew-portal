@@ -27,7 +27,10 @@ const betStore = useBetStore();
 
 // Données réactives
 const isLoading = ref<boolean>(false);
-const prediction = ref<PredictionProps | null>(null);
+const selectedBet = ref<BetModel | null>(betStore.selected);
+const prediction = ref<PredictionProps | null>(
+  (selectedBet.value?.prediction as PredictionProps) ?? null,
+);
 const userId = computed(() => authStore.getMe?.id ?? "");
 
 // Validation
@@ -79,7 +82,7 @@ const confirmBet = async () => {
     matchId: props.match.id!,
     uid: userId.value,
     match: {} as MatchModel,
-    prediction: getPredictionTla(prediction.value!),
+    prediction: prediction.value ?? "draw",
     potentialGain: potentialGain.value,
     potentialLoss: potentialLoss.value,
   };
@@ -88,7 +91,13 @@ const confirmBet = async () => {
     isLoading.value = true;
     emit("confirm", betData);
     console.log("bet-data ======>", betData);
-    await betStore.create(betData);
+    if (selectedBet.value) {
+      betStore.setSelected({ id: selectedBet.value.id, ...betData });
+      await betStore.update();
+      betStore.removeSelected();
+    } else {
+      await betStore.create(betData);
+    }
   } catch (error) {
     console.log("error====>", error);
     notify({
@@ -129,20 +138,6 @@ const getPredictionName = (type: PredictionProps): string => {
   }
 };
 
-const getPredictionTla = (type: PredictionProps): string => {
-  if (!props.match) return "";
-  switch (type) {
-    case "home":
-      return props.match.homeTeam.tla;
-    case "draw":
-      return "draw";
-    case "away":
-      return props.match.awayTeam.tla;
-    default:
-      return "";
-  }
-};
-
 // Watcher
 watch(
   () => props.modelValue,
@@ -150,7 +145,7 @@ watch(
     if (newValue) {
       resetForm();
     }
-  }
+  },
 );
 </script>
 
