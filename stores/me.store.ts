@@ -22,7 +22,12 @@ const useMeStore = defineStore("me-store", {
       email: "",
       user: null,
     },
-  persist: true,
+  persist: {
+    storage: {
+      getItem: (key) => useCookie(key).value ?? null,
+      setItem: (key, value) => (useCookie(key).value = value),
+    },
+  },
   getters: {
     getMe: (state) => state.user,
   },

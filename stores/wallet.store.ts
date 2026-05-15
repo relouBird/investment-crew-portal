@@ -21,7 +21,12 @@ const useWalletStore = defineStore("wallet-store", {
     <StateProps>{
       wallet: null,
     },
-  persist: true,
+  persist: {
+    storage: {
+      getItem: (key) => useCookie(key).value ?? null,
+      setItem: (key, value) => (useCookie(key).value = value),
+    },
+  },
   getters: {
     getWallet: (state) => state.wallet,
     getStatitics: (state) => state.statistic,

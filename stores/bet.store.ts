@@ -21,7 +21,12 @@ interface State {
 const service = useBetService();
 
 const useBetStore = defineStore("bet-store", {
-  persist: true,
+  persist: {
+    storage: {
+      getItem: (key) => useCookie(key).value ?? null,
+      setItem: (key, value) => (useCookie(key).value = value),
+    },
+  },
   state: (): State => ({
     selected: null,
     items: [],
