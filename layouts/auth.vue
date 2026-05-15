@@ -1,6 +1,6 @@
 <template>
-  <v-responsive class="scrooll">
-    <v-app class="bloc">
+  <v-app class="bloc">
+    <ClientOnly>
       <v-row justify="center" class="pa-0" align="center">
         <main>
           <div class="full">
@@ -9,8 +9,8 @@
           <slot />
         </main>
       </v-row>
-    </v-app>
-  </v-responsive>
+    </ClientOnly>
+  </v-app>
 </template>
 
 <style scoped>
@@ -44,7 +44,6 @@ main {
   display: flex;
   justify-content: center;
 }
-
 
 /* Mobile optimizations */
 @media (max-width: 650px) {
