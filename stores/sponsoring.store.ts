@@ -16,7 +16,12 @@ interface State {
 const service = useSponsoringService();
 
 const useSponsoringStore = defineStore("sponsoring-store", {
-  persist: true,
+  persist: {
+    storage: {
+      getItem: (key) => useCookie(key).value ?? null,
+      setItem: (key, value) => (useCookie(key).value = value),
+    },
+  },
   state: (): State => ({
     items: [],
     sponsorCount: 0,
