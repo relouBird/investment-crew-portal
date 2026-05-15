@@ -167,244 +167,258 @@ onMounted(() => {
 
 <template>
   <v-app>
-    <!-- Desktop Sidebar -->
-    <v-navigation-drawer
-      v-model="drawer"
-      :rail="!drawer && $vuetify.display.lgAndUp"
-      :permanent="$vuetify.display.mdAndUp"
-      :temporary="$vuetify.display.smAndDown"
-      color="white"
-      width="280"
-      elevation="0"
-      class="custom-drawer"
-    >
-      <div class="d-flex flex-column fill-height">
-        <!-- Logo/Brand Section -->
-        <div class="pa-4 border-b">
-          <div class="d-flex align-center">
-            <v-avatar size="40" class="mr-3">
-              <img src="~/assets/images/logo.png" width="45" alt="" />
-            </v-avatar>
-            <div v-if="drawer || $vuetify.display.smAndDown">
-              <h3>RSG INVESTIA</h3>
-              <p class="text-caption text-grey-darken-1 mb-0">
-                Investment Platform
-              </p>
+    <ClientOnly>
+      <!-- Desktop Sidebar -->
+      <v-navigation-drawer
+        v-model="drawer"
+        :rail="!drawer && $vuetify.display.lgAndUp"
+        :permanent="$vuetify.display.mdAndUp"
+        :temporary="$vuetify.display.smAndDown"
+        color="white"
+        width="280"
+        elevation="0"
+        class="custom-drawer"
+      >
+        <div class="d-flex flex-column fill-height">
+          <!-- Logo/Brand Section -->
+          <div class="pa-4 border-b">
+            <div class="d-flex align-center">
+              <v-avatar size="40" class="mr-3">
+                <img src="~/assets/images/logo.png" width="45" alt="" />
+              </v-avatar>
+              <div v-if="drawer || $vuetify.display.smAndDown">
+                <h3>RSG INVESTIA</h3>
+                <p class="text-caption text-grey-darken-1 mb-0">
+                  Investment Platform
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Navigation Items -->
+          <v-list class="flex-grow-1 pa-2">
+            <v-list-item
+              v-for="item in navigationItems"
+              :key="item.title"
+              :to="item.to"
+              :active="$route.path === item.to"
+              class="mb-2 rounded-lg"
+              color="primary"
+              variant="flat"
+            >
+              <template v-slot:prepend>
+                <component
+                  :is="item.icon"
+                  :color="$route.path === item.to ? 'primary' : '#9ca3af'"
+                  size="24"
+                />
+              </template>
+              <v-list-item-title
+                class="pl-2"
+                v-if="drawer || $vuetify.display.smAndDown"
+              >
+                <p
+                  :class="$route.path === item.to ? 'text-white' : 'text-muted'"
+                >
+                  {{ item.title }}
+                </p>
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+
+          <!-- User Profile Section -->
+          <div class="border-t pa-4 mt-auto">
+            <div class="d-flex align-center">
+              <v-avatar color="primary" size="40">
+                <span class="text-white font-weight-bold">{{
+                  userInitials
+                }}</span>
+              </v-avatar>
+              <div v-if="drawer || $vuetify.display.smAndDown" class="ml-3">
+                <div class="text-subtitle-2 font-weight-medium">
+                  {{ userName }}
+                </div>
+                <div class="text-caption text-grey-darken-1">
+                  ID: {{ user.generatedId ?? "000000000x1" }}
+                </div>
+              </div>
             </div>
           </div>
         </div>
+      </v-navigation-drawer>
 
-        <!-- Navigation Items -->
-        <v-list class="flex-grow-1 pa-2">
-          <v-list-item
-            v-for="item in navigationItems"
-            :key="item.title"
-            :to="item.to"
-            :active="$route.path === item.to"
-            class="mb-2 rounded-lg"
-            color="primary"
-            variant="flat"
+      <!-- Top App Bar -->
+      <v-app-bar
+        color="white"
+        elevation="0"
+        density="comfortable"
+        class="border-b px-4"
+      >
+        <!-- Mobile Menu Button -->
+        <v-app-bar-nav-icon
+          v-if="!$vuetify.display.smAndDown"
+          @click="drawer = !drawer"
+        ></v-app-bar-nav-icon>
+        <v-app-bar-nav-icon v-else @click="drawer = !drawer">
+          <v-avatar size="35" class="mr-3">
+            <img src="~/assets/images/logo.png" width="45" alt="" />
+          </v-avatar>
+        </v-app-bar-nav-icon>
+
+        <!-- Desktop Menu Toggle -->
+        <v-btn
+          v-if="$vuetify.display.lgAndUp"
+          icon="mdi-menu"
+          variant="text"
+          @click="drawer = !drawer"
+          class="mr-2"
+        ></v-btn>
+
+        <v-spacer></v-spacer>
+
+        <!-- Simple Balance Box -->
+        <div class="balance-container">
+          <div
+            class="balance-box d-flex flex-row-reverse justify-end align-center"
           >
-            <template v-slot:prepend>
-              <component
-                :is="item.icon"
-                :color="$route.path === item.to ? 'primary' : '#9ca3af'"
-                size="24"
-              />
-            </template>
-            <v-list-item-title class="pl-2" v-if="drawer || $vuetify.display.smAndDown">
-              <p :class="$route.path === item.to ? 'text-white' : 'text-muted'">
-                {{ item.title }}
-              </p>
-            </v-list-item-title>
-          </v-list-item>
-        </v-list>
+            <div class="d-flex pl-1">
+              <div class="balance-amount">
+                {{ formatBalance(accountBalance) }} &#x244;
+              </div>
+            </div>
+            <v-btn
+              icon="mdi-plus"
+              color="primary"
+              variant="flat"
+              size="x-small"
+              class="pa-0"
+              @click="showDepositDialog = true"
+            ></v-btn>
+          </div>
+        </div>
 
-        <!-- User Profile Section -->
-        <div class="border-t pa-4 mt-auto">
-          <div class="d-flex align-center">
-            <v-avatar color="primary" size="40">
+        <!-- Notifications -->
+        <v-btn
+          icon
+          variant="text"
+          class="mr-2"
+          @click="showNotifications = true"
+        >
+          <v-badge
+            v-if="notificationCount > 0"
+            :content="notificationCount"
+            color="error"
+            overlap
+          >
+            <v-icon>mdi-bell-outline</v-icon>
+          </v-badge>
+          <v-icon v-else>mdi-bell-outline</v-icon>
+        </v-btn>
+
+        <!-- Profile Menu -->
+        <v-menu>
+          <template v-slot:activator="{ props }">
+            <v-avatar
+              v-bind="props"
+              color="primary"
+              size="36"
+              class="cursor-pointer"
+            >
               <span class="text-white font-weight-bold">{{
                 userInitials
               }}</span>
             </v-avatar>
-            <div v-if="drawer || $vuetify.display.smAndDown" class="ml-3">
-              <div class="text-subtitle-2 font-weight-medium">
-                {{ userName }}
-              </div>
-              <div class="text-caption text-grey-darken-1">
-                ID: {{ user.generatedId ?? "000000000x1" }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </v-navigation-drawer>
-
-    <!-- Top App Bar -->
-    <v-app-bar
-      color="white"
-      elevation="0"
-      density="comfortable"
-      class="border-b px-4"
-    >
-      <!-- Mobile Menu Button -->
-      <v-app-bar-nav-icon
-        v-if="!$vuetify.display.smAndDown"
-        @click="drawer = !drawer"
-      ></v-app-bar-nav-icon>
-      <v-app-bar-nav-icon v-else @click="drawer = !drawer">
-        <v-avatar size="35" class="mr-3">
-          <img src="~/assets/images/logo.png" width="45" alt="" />
-        </v-avatar>
-      </v-app-bar-nav-icon>
-
-      <!-- Desktop Menu Toggle -->
-      <v-btn
-        v-if="$vuetify.display.lgAndUp"
-        icon="mdi-menu"
-        variant="text"
-        @click="drawer = !drawer"
-        class="mr-2"
-      ></v-btn>
-
-      <v-spacer></v-spacer>
-
-      <!-- Simple Balance Box -->
-      <div class="balance-container">
-        <div
-          class="balance-box d-flex flex-row-reverse justify-end align-center"
-        >
-          <div class="d-flex pl-1">
-            <div class="balance-amount">
-              {{ formatBalance(accountBalance) }} &#x244;
-            </div>
-          </div>
-          <v-btn
-            icon="mdi-plus"
-            color="primary"
-            variant="flat"
-            size="x-small"
-            class="pa-0"
-            @click="showDepositDialog = true"
-          ></v-btn>
-        </div>
-      </div>
-
-      <!-- Notifications -->
-      <v-btn icon variant="text" class="mr-2" @click="showNotifications = true">
-        <v-badge
-          v-if="notificationCount > 0"
-          :content="notificationCount"
-          color="error"
-          overlap
-        >
-          <v-icon>mdi-bell-outline</v-icon>
-        </v-badge>
-        <v-icon v-else>mdi-bell-outline</v-icon>
-      </v-btn>
-
-      <!-- Profile Menu -->
-      <v-menu>
-        <template v-slot:activator="{ props }">
-          <v-avatar
-            v-bind="props"
-            color="primary"
-            size="36"
-            class="cursor-pointer"
-          >
-            <span class="text-white font-weight-bold">{{ userInitials }}</span>
-          </v-avatar>
-        </template>
-        <v-list>
-          <v-list-item @click="logout">
-            <template v-slot:prepend>
-              <v-icon color="error">mdi-logout</v-icon>
-            </template>
-            <v-list-item-title>Déconnexion</v-list-item-title>
-          </v-list-item>
-        </v-list>
-      </v-menu>
-    </v-app-bar>
-
-    <!-- Main Content -->
-    <v-main style="background-color: #f4f6f9">
-      <v-container fluid class="pa-6">
-        <slot />
-      </v-container>
-    </v-main>
-
-    <!-- Mobile Bottom Navigation -->
-    <v-bottom-navigation
-      v-if="$vuetify.display.smAndDown"
-      v-model="activeTab"
-      color="primary"
-      bg-color="white"
-      height="70"
-      elevation="0"
-      class="border-t"
-    >
-      <v-btn
-        v-for="item in navigationItems"
-        :key="item.title"
-        :to="item.to"
-        :value="item.to"
-        size="small"
-        class="text-caption"
-      >
-        <component
-          :is="item.icon"
-          :color="$route.path === item.to ? 'primary' : '#9ca3af'"
-          size="24"
-        />
-        <span class="pt-1">{{ item.title }}</span>
-      </v-btn>
-    </v-bottom-navigation>
-
-    <!-- Deposit Dialog -->
-    <wallets-deposit-dialog v-model:model-value="showDepositDialog" />
-
-    <!-- Notifications Dialog -->
-    <v-dialog v-model="showNotifications" max-width="500px">
-      <v-card elevation="0">
-        <div class="d-flex w-100 justify-space-between">
-          <v-card-title class="text-h6 font-montserrat"
-            >Notifications</v-card-title
-          ><v-btn
-            icon="mdi-close"
-            @click="showNotifications = false"
-            variant="plain"
-            class="mr-1 mt-1"
-          ></v-btn>
-        </div>
-        <v-card-text>
+          </template>
           <v-list>
-            <v-list-item
-              v-for="notification in notifications"
-              :key="notification.id"
-              class="mb-2 rounded-lg"
-              :class="notification.read ? '' : 'bg-blue-lighten-5'"
-            >
+            <v-list-item @click="logout">
               <template v-slot:prepend>
-                <v-icon :color="getNotificationColor(notification.type)">
-                  {{ getNotificationIcon(notification.type) }}
-                </v-icon>
+                <v-icon color="error">mdi-logout</v-icon>
               </template>
-              <v-list-item-title>{{ notification.title }}</v-list-item-title>
-              <v-list-item-subtitle>{{
-                notification.message
-              }}</v-list-item-subtitle>
+              <v-list-item-title>Déconnexion</v-list-item-title>
             </v-list-item>
           </v-list>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn @click="markAllAsRead" color="primary" variant="flat">
-            Tout marquer comme lu
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+        </v-menu>
+      </v-app-bar>
+
+      <!-- Main Content -->
+      <v-main style="background-color: #f4f6f9">
+        <v-container fluid class="pa-6">
+          <slot />
+        </v-container>
+      </v-main>
+
+      <!-- Mobile Bottom Navigation -->
+      <v-bottom-navigation
+        v-if="$vuetify.display.smAndDown"
+        v-model="activeTab"
+        color="primary"
+        bg-color="white"
+        height="70"
+        elevation="0"
+        class="border-t"
+      >
+        <v-btn
+          v-for="item in navigationItems"
+          :key="item.title"
+          :to="item.to"
+          :value="item.to"
+          size="small"
+          class="text-caption"
+        >
+          <component
+            :is="item.icon"
+            :color="$route.path === item.to ? 'primary' : '#9ca3af'"
+            size="24"
+          />
+          <span class="pt-1">{{ item.title }}</span>
+        </v-btn>
+      </v-bottom-navigation>
+
+      <!-- Deposit Dialog -->
+      <wallets-deposit-dialog v-model:model-value="showDepositDialog" />
+
+      <!-- Notifications Dialog -->
+      <v-dialog v-model="showNotifications" max-width="500px">
+        <v-card elevation="0">
+          <div class="d-flex w-100 justify-space-between">
+            <v-card-title class="text-h6 font-montserrat"
+              >Notifications</v-card-title
+            ><v-btn
+              icon="mdi-close"
+              @click="showNotifications = false"
+              variant="plain"
+              class="mr-1 mt-1"
+            ></v-btn>
+          </div>
+          <v-card-text>
+            <v-list>
+              <v-list-item
+                v-for="notification in notifications"
+                :key="notification.id"
+                class="mb-2 rounded-lg"
+                :class="notification.read ? '' : 'bg-blue-lighten-5'"
+              >
+                <template v-slot:prepend>
+                  <v-icon :color="getNotificationColor(notification.type)">
+                    {{ getNotificationIcon(notification.type) }}
+                  </v-icon>
+                </template>
+                <v-list-item-title>{{ notification.title }}</v-list-item-title>
+                <v-list-item-subtitle>{{
+                  notification.message
+                }}</v-list-item-subtitle>
+              </v-list-item>
+            </v-list>
+          </v-card-text>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn @click="markAllAsRead" color="primary" variant="flat">
+              Tout marquer comme lu
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </ClientOnly>
   </v-app>
 </template>
 
