@@ -259,20 +259,11 @@ onMounted(() => {
           v-if="!$vuetify.display.smAndDown"
           @click="drawer = !drawer"
         ></v-app-bar-nav-icon>
-        <v-app-bar-nav-icon v-else @click="drawer = !drawer">
+        <v-app-bar-nav-icon v-else>
           <v-avatar size="35" class="mr-3">
             <img src="~/assets/images/logo.png" width="45" alt="" />
           </v-avatar>
         </v-app-bar-nav-icon>
-
-        <!-- Desktop Menu Toggle -->
-        <v-btn
-          v-if="$vuetify.display.lgAndUp"
-          icon="mdi-menu"
-          variant="text"
-          @click="drawer = !drawer"
-          class="mr-2"
-        ></v-btn>
 
         <v-spacer></v-spacer>
 
