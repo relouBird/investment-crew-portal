@@ -23,6 +23,9 @@
 .bloc {
   background: #f0f2f5;
   padding: none !important;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: hidden;
 }
 
 .imagePage {
