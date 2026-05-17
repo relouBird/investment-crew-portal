@@ -20,6 +20,7 @@ const useWalletStore = defineStore("wallet-store", {
   state: () =>
     <StateProps>{
       wallet: null,
+      statistic: null,
     },
   persist: {
     storage: {
